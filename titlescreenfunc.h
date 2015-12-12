@@ -18,15 +18,33 @@ void printBackground(int x, int y);
 
 void printTitle();
 
-void playGame(int c);
-
 void printTitleScreen(int xsize, int ysize);
 
 void printShip();
 
 // attack
+typedef struct PirateShip_t
+{
+	int life, hp, level, cannons;
+	char FlagColor[10];
+} PirateShip;
+typedef struct AttackStats_t
+{
+	int enemyShipLvl, enemyLife, enemyHP, enemyCannons, damageToEnemy, hit, enemyHit, damageToMe;
+	char EnemyFlagColor[10];
+} AttackStats;
 
-void playPirate();
+void attackWave(PirateShip *myShip, AttackStats *attack);
+
+void attackShip(PirateShip *myShip, AttackStats *attack);
+
+void statsBar(PirateShip *myShip, AttackStats *attack);
+
+void drawEnemy(AttackStats *attack);
+
+int playerShot(PirateShip *myShip, AttackStats *attack);
+
+void attackShips();
 
 // treasure
 struct Blocks {

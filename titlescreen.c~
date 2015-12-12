@@ -5,36 +5,39 @@
 
 int main ()
 {
-	char c;
-	int X, Y, check;
-	// int xsize = 400, ysize = 750, minixsize = 400, miniysize = 750;
-	int xsize = 800, ysize = 800, minixsize = 400, miniysize = 750;
-	int treasure;
+	char c;							// user input from keyboard
+	int X, Y, check;				// X position, Y position, check for zone
+	int xsize = 800, ysize = 800;	// window sizes
 
-	gfx_open(xsize, ysize, "YoHo: A Pirate's Life");
-	printTitleScreen(xsize, ysize);
+	gfx_open(xsize, ysize, "YoHo: A Pirate's Life");	// opens window
+	printTitleScreen(xsize, ysize);						// prints title screen
 	
 	while(1)
 	{
-		c = gfx_wait();
+		c = gfx_wait();		// gets user input
 			
 		switch (c)
 		{
-			case 1:
-				X = gfx_xpos();
-				Y = gfx_ypos();
-				check = checkZone(X, Y);
+			case 1:	// click
+				X = gfx_xpos();				// gets X position of click
+				Y = gfx_ypos();				// gets y position of click
+				check = checkZone(X, Y);	// checks range of click position
 				switch (check)
 				{
 					case 0: // Quit
 						return 0;
 						break;
 					case 1: // Attack
+						gfx_clear();
+						attackShips(); 		// runs attack minigame
+						break;
 					case 2: // Treasure
-						playGame(minixsize, miniysize, check);
+						gfx_clear();	
+						treasureHunt();		// runs treasure minigame
 						break;
 					case 3: // Rum
-						drinkRum();
+						gfx_clear();	
+						drinkRum();			// runs run screen
 						break;
 				}
 				break;

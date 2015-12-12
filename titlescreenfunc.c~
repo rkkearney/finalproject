@@ -13,72 +13,61 @@ int checkZone(int X, int Y)
 {
 	int option;
 	
-	if ((X >= 25 && X <= 175) && (Y >= 225 && Y <= 375)) option = 1;
-	else if ((X >= 225 && X <= 375) && (Y >= 225 && Y <= 375)) option = 2;
-	//else if ((X >= 125 && X <= 275) && (Y >= 400 && Y <= 500)) option = 3;
-	else if ((X >= 25 && X <= 175) && (Y >= 525 && Y <= 675)) option = 3;
-	else if ((X >= 225 && X <= 375) && (Y >= 525 && Y <= 675)) option = 0;
-	else option = 5;
+	if ((X >= 25 && X <= 175) && (Y >= 225 && Y <= 375)) option = 1;		// attack zone
+	else if ((X >= 225 && X <= 375) && (Y >= 225 && Y <= 375)) option = 2;	// treasure zone
+	else if ((X >= 25 && X <= 175) && (Y >= 525 && Y <= 675)) option = 3;	// rum zone
+	else if ((X >= 225 && X <= 375) && (Y >= 525 && Y <= 675)) option = 0;	// quit zone
+	else option = 5;														// junk value
 	return option;
 }
 
 void printMenu()
 {
-	printBox(25, 225, "Attack Ships", 55, 300);
-	printBox(225, 225, "Hunt for Treasure", 240, 300);
-	// printBox(125, 400, "Drink Rum", 165, 450);
-	printBox(25, 525, "Drink Rum", 65, 600);
-	printBox(225, 525, "Quit", 285, 600);
+	printBox(25, 225, "Attack Ships", 55, 300); 			// prints Attack button
+	printBox(225, 225, "Hunt for Treasure", 240, 300);		// prints Treasure button
+	printBox(25, 525, "Drink Rum", 65, 600);				// prints Rum button
+	printBox(225, 525, "Quit", 285, 600);					// prints Quit button
 }
 
 void printBox(int x, int y, char * title, int xt, int yt)
 {
-	// box
-	gfx_color(51, 25, 0); //brown
+	// prints box
+	gfx_color(51, 25, 0);		//brown
 	gfx_fill_rectangle(x, y, 150, 150);
 	
-	// text
-	gfx_color(255, 255, 255); //white
+	// prints label text
+	gfx_color(255, 255, 255);	//white
 	gfx_changefont("lucidasanstypewriter-bold-12");
 	gfx_text(xt, yt, title);
 }
 
 void printBackground(int xsize, int ysize)
 {
-	// sky
-	gfx_color(102, 178, 255); //light blue
+	// prints sky
+	gfx_color(102, 178, 255);	//light blue
 	gfx_fill_rectangle(0, 0, xsize, (ysize - 200));
 	
-	// water
-	gfx_color(0, 76, 153); //dark blue
+	// prints water
+	gfx_color(0, 76, 153);		//dark blue
 	gfx_fill_rectangle(0, (ysize - 200), xsize, 200);
 	
-	// sun
-	gfx_color(255, 255, 0); //yellow
+	// prints sun
+	gfx_color(255, 255, 0);		//yellow
 	gfx_fill_circle((xsize - (xsize/6)), (ysize/6), 50);
 }
 
 void printTitle()
 {
-	gfx_color(0, 0, 0);
+	gfx_color(0, 0, 0);			//black
 	gfx_changefont("lucidasanstypewriter-bold-24");
 	gfx_text(175, 75, "YoHo!");
 	gfx_text(100, 125, "a pirate's life");
 	
 }
 
-void playGame(int c)
-{
-	// gfx_open(xsize, ysize, "Mini Game");
-	gfx_clear();
-	
-	if (c == 1) ; // playPirate();
-	else if (c == 2) treasureHunt();
-}
-
 void printTitleScreen(int xsize, int ysize)
 {
-	// Set Up Window
+	// Clear Window
 	gfx_clear();
 
 	// Draw Window
@@ -92,8 +81,8 @@ void printShip()
 {
 	int X = 600, Y = 600;
 	
+	// set parameters for base
 	XPoint base[4];
-	XPoint sail[3];
 	base[0].x = X - 70;
 	base[0].y = Y - 20;
 	base[1].x = X + 70;
@@ -102,7 +91,9 @@ void printShip()
 	base[2].y = Y + 20;
 	base[3].x = X - 40;
 	base[3].y = Y + 20;
-	
+
+	// set parameters for sail
+	XPoint sail[3];
 	sail[0].x = X;
 	sail[0].y = Y - 100;
 	sail[1].x = X + 70;
@@ -110,11 +101,299 @@ void printShip()
 	sail[2].x = X - 40;
 	sail[2].y = Y - 25;	
 	
+	// draw
 	gfx_color(74, 64, 25);	//wood brown
 	gfx_fill_polygon(base, 4);
 	gfx_color(0, 0, 0);		//black
 	gfx_fill_polygon(sail, 3);
 }
+
+// Attack
+#define XSIZE 800
+#define YSIZE 800
+#define XMID 400
+#define YMID 400
+#define CANNONBALLWEIGHT 10
+#define CANNONWEIGHT 1000
+#define SHIPWEIGHT 10000
+#define CANNONPRICE 2000
+#define CANNONBALLPRICE 10
+
+//FUNCTIONS
+void attackWave(PirateShip *myShip, AttackStats *attack)
+{
+	time_t t;
+	srand(time(&t));
+	int n = 1;
+	
+	while (n)
+	{
+	
+		int d = 0;			//distance from user game
+		//Your attack on the enemy
+		d = playerShot(myShip, attack);
+		if (d < 0)
+		{
+			n = 0;
+			continue;
+		}
+		if (d <= 5)
+		{
+			attack->hit = myShip->cannons;
+		}
+		else if (d <= 10)
+		{
+			attack->hit = myShip->cannons - 1;
+		}
+		else if (d <= 20)
+		{
+			attack->hit = myShip->cannons - 2;
+		}
+		else if (d <= 40)
+		{
+			attack->hit = myShip->cannons - 3;
+		}
+		else
+		{
+			attack->hit = myShip->cannons - 4;
+		}
+		attack->damageToEnemy = attack->hit * 10;
+		attack->enemyLife -= attack->damageToEnemy;
+		//enemy attack on you
+		attack->enemyHit = rand() % (attack->enemyCannons + 1);
+		attack->damageToMe = attack->enemyHit * 10;
+		myShip->life -= attack->damageToMe;
+		//print results of attack
+		printf("Life : %d/%d\n", myShip->life, myShip->hp);
+		printf("Enemy Life : %d/%d\n", attack->enemyLife, attack->enemyHP);
+		if(gfx_event_waiting())
+		{
+			char c;
+			c = gfx_wait();
+			if (c == 'q')
+			{
+				n = 0;
+			}
+		}
+		if (myShip->life >= .25 * myShip->hp && attack->enemyLife >= .25 * attack->enemyHP)
+		{
+			n = 1;
+		}
+		else if (myShip->life > attack->enemyLife && myShip->life > 0 || myShip->life >= .25 * myShip->hp && attack->enemyLife < .25 * attack->enemyHP)
+		{
+			printf("YOU SUCCESSFULLY LOOTED THE ENEMY SHIP\n");
+			n = 0;
+		}
+		else 
+		{
+			printf("YOUR SHIP HAS BEEN BOARDED. BETTER LUCK NEXT TIME.\n");
+			n = 0;
+		}
+	}
+}
+
+void attackShip(PirateShip *myShip, AttackStats *attack)
+{
+	time_t t;
+	srand(time(&t));
+	attack->enemyShipLvl = rand() % 3 +1;
+	attack ->enemyCannons = 4;
+	if (attack->enemyShipLvl == 1)
+	{
+		strcpy(attack->EnemyFlagColor, "yellow");
+		attack->enemyLife = rand() % 41 + 10;
+		attack->enemyHP = attack->enemyLife;
+	}
+	else if (attack->enemyShipLvl == 2)
+	{
+		strcpy(attack->EnemyFlagColor, "red");
+		attack->enemyLife = rand() % 51+ 50;
+		attack->enemyHP = attack->enemyLife;
+	}
+	else	//if enemy ship lvl == 0
+	{
+		strcpy(attack->EnemyFlagColor, "blue");
+		attack->enemyLife = rand() % 51+ 100;
+		attack->enemyHP = attack->enemyLife;
+	} 
+	if (gfx_event_waiting())
+	{
+		char c;
+		c = gfx_wait();
+		if (c == 'q')
+		{
+			return;
+		}
+	}
+	attackWave(myShip, attack);
+}
+
+int playerShot(PirateShip *myShip, AttackStats *attack)
+{
+	time_t t;
+	srand(time(&t));
+	int r = 30;					//radius
+	int x = 50, y = YMID;		//starting coordinates
+	int d = 0;		//distance from center target
+	double dx = 1.;		//change in coordinates
+	char c;
+	double deltat = 10000;
+	drawEnemy(attack);
+	attack->enemyShipLvl == rand() % 3 ;
+	//change crosshair target speed
+	if(attack->enemyShipLvl == 1)		//level 1 enemy
+	{
+		deltat = 7000;
+	}
+	else if (attack->enemyShipLvl == 2)		//level 2 enemy
+	{
+		deltat = 4000;
+	}
+	else		//level 3 enemy
+	{
+		deltat = 3000;
+	}
+	while (1)
+	{
+		gfx_clear();
+		statsBar(myShip, attack);
+		//gfx_clear_color(213, 47, 94);
+		drawEnemy(attack);
+		statsBar(myShip, attack);
+		//draw white target circle
+		gfx_color(255, 255, 255);
+		gfx_circle(XMID, YMID, r);
+		//draw moving green crosshair circle
+		gfx_color(82, 199, 104);
+		gfx_point(x, y);
+		gfx_circle(x, y, r);
+		gfx_flush();
+		usleep(deltat);
+		//if crosshairs hits edge of screen reverse direction
+		if (x >= XSIZE - r || x <= r)
+		{
+			dx = dx * -1;
+		}
+		//change center of crosshairs
+		x += dx;
+		
+		if (gfx_event_waiting())
+		{
+			c = gfx_wait();
+			switch (c)
+			{
+				case (1):
+				{
+					d = abs(x-XMID);
+					return d;
+					break;
+				}
+				case('q'):
+				{
+					return -5;
+				}
+			}
+		}
+	}	
+}
+void drawEnemy(AttackStats *attack)
+{
+	XPoint base[4];
+	XPoint sail[3];
+	//boat base drawing
+	base[0].x = XMID - 70;
+	base[0].y = YMID - 20;
+	base[1].x = XMID + 70;
+	base[1].y = YMID - 20;
+	base[2].x = XMID + 40;
+	base[2].y = YMID + 20;
+	base[3].x = XMID - 40;
+	base[3].y = YMID + 20;
+	//boat sail drawing
+	sail[0].x = XMID;
+	sail[0].y = YMID - 100;
+	sail[1].x = XMID + 70;
+	sail[1].y = YMID - 25;
+	sail[2].x = XMID - 40;
+	sail[2].y = YMID - 25;
+	//color and fill functions
+	gfx_color(17, 0, 127);							//ocean blue
+	gfx_fill_rectangle(0, YSIZE/2, XSIZE, YSIZE/2);
+	gfx_color(74, 64, 25);							//wood brown
+	gfx_fill_polygon(base, 4);
+	if(!strcmp(attack->EnemyFlagColor, "yellow"))
+	{
+		gfx_color(255, 255, 102);	//yellow flag
+	}
+	else if(!strcmp(attack->EnemyFlagColor, "red"))
+	{
+		gfx_color(204, 0, 0);	//red flag
+	}
+	else		//blue flag
+	{
+		gfx_color(32, 106, 255);
+	}
+	gfx_fill_polygon(sail, 3);
+}
+void statsBar(PirateShip *myShip, AttackStats *attack)
+{
+	gfx_color(255, 255, 255);
+	gfx_text(25, 25, "Your Life:");
+	gfx_text(20, 50, "Enemy Life:");
+	
+	XPoint myHP[4];
+	myHP[0].x = 100;
+	myHP[0].y = 20;
+	myHP[1].x = myShip->hp*5 + 100;//XSIZE - 100;
+	myHP[1].y = 20; 
+	myHP[2].x = myShip->hp*5 + 100; //XSIZE - 100;
+	myHP[2].y = 30;
+	myHP[3].x = 100;
+	myHP[3].y = 30;
+	XPoint enemyHP[4];
+	enemyHP[0].x = 100;
+	enemyHP[0].y = 45;
+	enemyHP[1].x = attack->enemyHP*5 + 100; //XSIZE - 100;
+	enemyHP[1].y = 45;
+	enemyHP[2].x = attack->enemyHP*5 + 100;  //XSIZE - 100;
+	enemyHP[2].y = 55;
+	enemyHP[3].x = 100;
+	enemyHP[3].y = 55;
+	
+	XPoint myLife[4];
+	myLife[0].x = 100;
+	myLife[0].y = 20;
+	myLife[1].x = myShip->life*5 + 100; //(XSIZE - 100) * (myShip->life / myShip->hp) + 50;
+	myLife[1].y = 20;
+	myLife[2].x = myShip->life*5 + 100; //(XSIZE - 100) * (myShip->life / myShip->hp) + 50;
+	myLife[2].y = 30;
+	myLife[3].x = 100;
+	myLife[3].y = 30;
+	XPoint enemyLife[4];
+	enemyLife[0].x = 100;
+	enemyLife[0].y = 45;
+	enemyLife[1].x = attack->enemyLife*5 + 100;//(XSIZE - 100) * (attack->enemyLife / attack->enemyHP) + 50;
+	enemyLife[1].y = 45;
+	enemyLife[2].x = attack->enemyLife*5 + 100;//(XSIZE - 100) * (attack->enemyLife / attack->enemyHP) + 50;
+	enemyLife[2].y = 55;
+	enemyLife[3].x = 100;
+	enemyLife[3].y = 55;
+	
+	gfx_color(43, 245, 25);	//blue
+	gfx_fill_polygon(myHP, 4);
+	gfx_fill_polygon(enemyHP, 4);
+	gfx_color(255, 255, 255);
+	gfx_fill_polygon(myLife, 4);
+	gfx_fill_polygon(enemyLife, 4);	
+}
+
+void attackShips()
+{
+	PirateShip BlackPearl = {110, 110, 2, 4, "Black"};
+	AttackStats attack;
+	attackShip(&BlackPearl, &attack);
+}
+
 
 // Treasure
 void pickColor(int c)
@@ -122,22 +401,22 @@ void pickColor(int c)
 	switch (c)
 	{
 		case 0:
-			gfx_color(102, 178, 255); // light
+			gfx_color(102, 178, 255);	//light blue
 			break;
 		case 1:
-			gfx_color(0, 102, 204); // medium
+			gfx_color(0, 102, 204);		//medium
 			break;
 		case 2:
-			gfx_color(0, 51, 102); // dark
+			gfx_color(0, 51, 102);		//dark
 			break;
 		case 3:
-			gfx_color(255, 255, 255); // white
+			gfx_color(255, 255, 255);	//white
 			break;
 		case 4:
-			gfx_color(0, 0, 0); // black
+			gfx_color(0, 0, 0);			//black
 			break;
 		case 5:
-			gfx_color(255, 255, 0); // yellow
+			gfx_color(255, 255, 0);		//yellow
 			break;
 	}
 }
@@ -146,26 +425,27 @@ void pickColor(int c)
 	
 void initializeBoard(struct Blocks board[], int length, int x0, int y0, int w)
 {
-	initializeWidth(board, length, w); // initializes all width
-	initializeX(board, length, x0); // sets all x positions
-	initializeY(board, length, y0); // sets all y positions
-	initializeTreasure(board, length); // initializes all treasure to 0
-	randTreasure(board, length); // picks random places for treasure
-	initializeColor(board, length); // sets color for each cell
-	initializePosition(board, length); // sets current position
+	initializeWidth(board, length, w);	// initializes all width
+	initializeX(board, length, x0);		// sets all x positions
+	initializeY(board, length, y0);		// sets all y positions
+	initializeTreasure(board, length);	// initializes all treasure to 0
+	randTreasure(board, length);		// picks random places for treasure
+	initializeColor(board, length);		// sets color for each cell
+	initializePosition(board, length);	// sets current position
 }
 
 void initializeX(struct Blocks board[], int length, int x0)
 {
 	int i, x = x0, d = board[0].width;
+	
 	for (i = 0; i < length; i++)
 	{
-		if (i == 10 || i == 20 || i == 30 || i == 40 || i == 50 || i == 60 || i == 70 || i == 80 || i == 90 || i == 100 || i == 110 || i == 120 || i == 130 || i == 140)
+		if (i == 10 || i == 20 || i == 30 || i == 40 || i == 50 || i == 60 || i == 70 || i == 80 || i == 90 || i == 100 || i == 110 || i == 120 || i == 130 || i == 140)		// checks if 1st of row
 		{
-			x = x0;
+			x = x0;		// sets 1st of row to intial x-value
 		}
-		board[i].x = x;
-		x += d;
+		board[i].x = x; // sets x-value of board position to x
+		x += d;			// increments x by width of box
 	}
 }
 
@@ -176,18 +456,18 @@ void initializeY(struct Blocks board[], int length, int y0)
 	{	
 		if (i == 10 || i == 20 || i == 30 || i == 40 || i == 50 || i == 60 || i == 70 || i == 80 || i == 90 || i == 100 || i == 110 || i == 120 || i == 130 || i == 140)
 		{
-			y += d;
+			y += d;		// increments 1st of row to next y-value
 		}
-		board[i].y = y;
+		board[i].y = y; // sets y-value of board position to y
 	}
 }
 
 void initializeTreasure(struct Blocks board[], int length)
 {
-	int i; // get random value for color
+	int i;
 	for (i = 0; i < length; i++)
 	{
-		board[i].treasure = 0;
+		board[i].treasure = 0;		// sets all treasure values to 0 before randTreasure
 	}
 }
 
@@ -199,9 +479,9 @@ void randTreasure(struct Blocks board[], int length)
 
 	for (i = 0; i < 10; i++)
 	{
-		x = rand() % 150; // get random place for treasure
-		if (x == 74) x + (rand() % 10);
-		board[x].treasure = 1; // set position as treasure
+		x = rand() % 150;					// get random place for treasure
+		if (x == 74) x + (rand() % 10);		// makes sure initial point is not treasure
+		board[x].treasure = 1;				// set position as treasure
 	}
 }
 
@@ -210,7 +490,7 @@ void initializeWidth(struct Blocks board[], int length, int width)
 	int i;
 	for (i = 0; i < length; i++)
 	{
-		board[i].width = width;
+		board[i].width = width;		// intialize every width to 40
 	}
 }
 
@@ -218,13 +498,12 @@ void initializeColor(struct Blocks board[], int length)
 {
 	time_t t;
 	srand(time(&t));
-	
 	int i;
 	
 	for (i = 0; i < length; i++)
 	{
-		if (i == 74) board[i].color = rand() % 3;
-		else board[i].color = 3;
+		if (i == 74) board[i].color = rand() % 3;	// sets random color value between 0-2 for start point
+		else board[i].color = 3;					// sets every other value to 3 (white)
 	}
 }
 
@@ -234,8 +513,8 @@ void initializePosition(struct Blocks board[], int length)
 	
 	for (i = 0; i < length; i++)
 	{
-		if (i == 74) board[i].current = 1;
-		else if (i != 74) board[i].current = 0;
+		if (i == 74) board[i].current = 1;			// sets initialposition value to true
+		else if (i != 74) board[i].current = 0;		// sets all others to false
 	}
 }
 
@@ -243,67 +522,67 @@ void printBoard(struct Blocks board[], int length)
 {
 	time_t t;
 	srand(time(&t));
-	
 	int i;
 	
 	for (i = 0; i < length; i++)
 	{
-		if (board[i].treasure)
+		if (board[i].treasure) 						// if treasure
 		{
-			board[i].color = rand() % 3;
-			pickColor(board[i].color); // set drawing color to stored (light/medium/dark)
-			gfx_fill_rectangle(board[i].x, board[i].y, board[i].width, board[i].width);
-			printCoin(board[i].x, board[i].y);
+			board[i].color = rand() % 3;			// assigns random color value to board[i].treasure
+			pickColor(board[i].color); 				// set drawing color to stored (light/medium/dark)
+			gfx_fill_rectangle(board[i].x, board[i].y, board[i].width, board[i].width); // draw block
+			printCoin(board[i].x, board[i].y);		// prints coin on top of block
 		}
-		else if (!board[i].treasure)
+		else if (!board[i].treasure)				// if not treasure
 		{
-			pickColor(board[i].color); // set drawing color to stored (white)
-			gfx_fill_rectangle(board[i].x, board[i].y, board[i].width, board[i].width);
+			pickColor(board[i].color); 				// set drawing color to stored (white)
+			gfx_fill_rectangle(board[i].x, board[i].y, board[i].width, board[i].width); // draw block
 		}
-		if (board[i].current)
+		if (board[i].current) 						// if current position
 		{
-			printX(board[i].x, board[i].y);
+			printX(board[i].x, board[i].y);			// prints X on block
 		}
 	}
 }
 
 void printCoin(int x, int y)
 {
-	x = x + ((x + 40) - x)/2;
-	y = y + ((y + 40) - y)/2;
+	x = x + ((x + 40) - x)/2;	// calculates center x-value for circle
+	y = y + ((y + 40) - y)/2;	// calculates center y-value for circle
 	
-	pickColor(5); // set drawing color to yellow
-	gfx_fill_circle(x, y, 10);
+	pickColor(5); 				// set drawing color to yellow
+	gfx_fill_circle(x, y, 10);	// draw circle
 }
 
 void printX(int x, int y)
 {
 	int x1, y1, x2, y2;
-	pickColor(4); // set drawing color to black
+	pickColor(4); 					// set drawing color to black
 	
-	x1 = x + ((x + 40) - x)/3;
+	x1 = x + ((x + 40) - x)/3;		// calculates end points for line
 	y1 = y + ((y + 40) - y)/3;
 	x2 = x + 2*((x + 40) - x)/3;
 	y2 = y + 2*((y + 40) - y)/3;
-	gfx_line(x1, y1, x2, y2);
+	gfx_line(x1, y1, x2, y2);		// prints first line
 	
-	y = y + 40; // adjust y for second line
-	x1 = x + ((x + 40) - x)/3;
+	y = y + 40; 					// adjust y for second line
+	x1 = x + ((x + 40) - x)/3;		// calculates end points for line
 	y1 = y + ((y - 40) - y)/3;
 	x2 = x + 2*((x + 40) - x)/3;
 	y2 = y + 2*((y - 40) - y)/3;
-	gfx_line(x1, y1, x2, y2);
+	gfx_line(x1, y1, x2, y2);		// prints second line
 }
 
 void printUpcoming(int x)
 {
-	pickColor(x); // sets color
-	gfx_fill_rectangle(350, 115, 20, 20);
+	pickColor(x); 							// sets color for upcoming
+	gfx_fill_rectangle(350, 115, 20, 20);	// prints upcoming color in upper corner
 }
 
 void printText()
 {
-	pickColor(3); // set drwaing color to white
+	pickColor(3); 	// set drawing color to white
+	
 	// print text
 	gfx_text(43, 15, "Arggg, Matey! Time to find the treasure!");
 	gfx_text(18, 35, "Use arrow keys to move up, down, left, and right.");
@@ -314,11 +593,11 @@ void printText()
 	gfx_text(335, 110, "Up Next: ");
 	gfx_text(105, 770, "Press 'q' anytime to exit.");
 	
-	gfx_changefont("lucidasanstypewriter-bold-24");
-	pickColor(4);
-	gfx_text(585, 320, "HUNT");
-	gfx_text(590, 360, "for");
-	gfx_text(555, 400, "TREASURE");
+	gfx_changefont("lucidasanstypewriter-bold-24");		// change font for title
+	pickColor(4);										// change drawing color to black
+	gfx_text(580, 320, "HUNT");
+	gfx_text(585, 360, "for");
+	gfx_text(550, 400, "TREASURE");
 }
 
 int newColor()
@@ -326,7 +605,8 @@ int newColor()
 	time_t t;
 	srand(time(&t));
 	int c;
-	c = rand() % 3;
+	
+	c = rand() % 3;		// gets random value for color between 0 and 2 
 	
 	return c;
 }
@@ -334,12 +614,15 @@ int newColor()
 // Functions for Playing
 void printBlock(int x, int y, int width, int color)
 {
-	pickColor(color); // set drawing color to next color
-	gfx_fill_rectangle(x, y, width, width);
+	pickColor(color); 							// set drawing color to next color
+	gfx_fill_rectangle(x, y, width, width);		// draw block
 }
 
 // Check and Change if Match
 int checkFour(struct Blocks board[], int length, int currentPosition)
+	/*	checks if four surrounding are a match and adjusts board accordingly
+	 	returns 1 if match is made
+	 	returns 0 if no match 		*/
 {
 	if (board[currentPosition].color == board[currentPosition - 1].color && board[currentPosition].color == board[currentPosition - 10].color && board[currentPosition].color == board[currentPosition + 1].color && board[currentPosition].color == board[currentPosition + 10].color)
 	{
@@ -357,6 +640,9 @@ int checkFour(struct Blocks board[], int length, int currentPosition)
 }
 
 int checkThree(struct Blocks board[], int length, int currentPosition)
+	/*	checks if three surrounding are a match and adjusts board accordingly
+	 	returns 1 if match is made
+	 	returns 0 if no match 		*/
 {	
 	if ((board[currentPosition].color == board[currentPosition - 1].color) && (board[currentPosition].color == board[currentPosition - 10].color) && (board[currentPosition].color == board[currentPosition + 1].color))
 	{
@@ -402,6 +688,9 @@ int checkThree(struct Blocks board[], int length, int currentPosition)
 }
 
 int checkTwo(struct Blocks board[], int length, int currentPosition)
+	/*	checks if two surrounding are a match and adjusts board accordingly
+	 	returns 1 if match is made
+	 	returns 0 if no match 		*/
 {
 	if ((board[currentPosition].color == board[currentPosition - 1].color) && (board[currentPosition].color == board[currentPosition - 10].color))
 	{
@@ -552,32 +841,35 @@ int checkTwo(struct Blocks board[], int length, int currentPosition)
 
 int move(struct Blocks board[], int length, int currentPosition, int nextColor, char c)
 {
-	board[currentPosition].current = 0;
+	board[currentPosition].current = 0;	// sets current value to 0 for currentPosition
 	printBlock(board[currentPosition].x, board[currentPosition].y, board[currentPosition].width, board[currentPosition].color);
-	switch (c)
+	switch (c)							// to change currentPosition
 	{
-		case 'u':
-			currentPosition -= 10;
+		case 'u':						// move up
+			currentPosition -= 10;		// changes position to one above
 			break;
-		case 'd':
-			currentPosition += 10;
+		case 'd':						// move down
+			currentPosition += 10;		// changes position to one below
 			break;
-		case 'l':
-			currentPosition -= 1;
+		case 'l':						// move left
+			currentPosition -= 1;		// changes position to one left
 			break;
-		case 'r':
-			currentPosition += 1;
+		case 'r':						// move right
+			currentPosition += 1;		// changes position to one right
 			break;
 	}
-	board[currentPosition].current = 1;
-	board[currentPosition].color = nextColor;
-	printBlock(board[currentPosition].x, board[currentPosition].y, board[currentPosition].width, board[currentPosition].color);
-	printX(board[currentPosition].x, board[currentPosition].y);
+	board[currentPosition].current = 1;			// sets current value to 1 for new currentPosition
+	board[currentPosition].color = nextColor;	// sets value for color to the value of nextColor
+	printBlock(board[currentPosition].x, board[currentPosition].y, board[currentPosition].width, board[currentPosition].color); // draws block
+	printX(board[currentPosition].x, board[currentPosition].y);		// draws X on block
 	
 	return currentPosition;
 }
 
 int isTrapped(struct Blocks board[], int length, int currentPosition)
+	/* 	checks if currentPosition is completely surrounded by other colors or boundary
+		if trapped, returns 1
+		if not trapped, returns 0 	*/
 {
 	if (board[currentPosition - 1].color != 3 && board[currentPosition - 10].color != 3 && board[currentPosition + 1].color != 3 && board[currentPosition + 10].color != 3)
 	{
@@ -610,6 +902,7 @@ int isTrapped(struct Blocks board[], int length, int currentPosition)
 }
 
 int treasureHunt()
+	/* runs treasure mini game */
 {
 	char c;
 	int x0 = 0, y0 = 150, w = 40, length = 150, currentPosition = 74;
@@ -618,110 +911,104 @@ int treasureHunt()
 	int trapped = 0;
 	struct Blocks board[length];
 	
-	printBackground(xsize, ysize);
-	printShip();
-	pickColor(4); // sets color to black
-	gfx_fill_rectangle(0, 0, 400, 150);		// prints box around text
-	gfx_line(400, 0, 400, 750);			// prints side border line
-	gfx_line(0, 750, 400, 750);			// prints bottom border line
-	printText();
-	nextColor = newColor();
-	printUpcoming(nextColor);
-	initializeBoard(board, length, x0, y0, w);
-	printBoard(board, length);
+	printBackground(xsize, ysize);				// prints background
+	printShip();								// prints ship on background
+	pickColor(4); 								// sets color to black
+	gfx_fill_rectangle(0, 0, 400, 150);			// prints box around text
+	gfx_line(400, 0, 400, 750);					// prints side border line
+	gfx_line(0, 750, 400, 750);					// prints bottom border line
+	printText();								// prints text instructions
+	nextColor = newColor();						// sets initial nextColor
+	printUpcoming(nextColor);					// prints initial nextColor
+	initializeBoard(board, length, x0, y0, w);	// intializes board
+	printBoard(board, length);					// prints board (block by block)
 	
 	while (1) {
 		c = gfx_wait();
 		switch (c) {
 			case 'R': // Up
 				if (currentPosition >= 1 && currentPosition <= 9)
+					// checks if out of board
 				{
 					printf("Out of Board. Make another move.\n");
 				}
 				else if (board[currentPosition - 10].color == 3)
 				{
-					currentPosition = move(board, length, currentPosition, nextColor, 'u');
-					if (checkFour(board, length, currentPosition));
-					else if (checkThree(board, length, currentPosition));
-					else if (checkTwo(board, length, currentPosition));
-					nextColor = newColor();
-					printUpcoming(nextColor);
+					currentPosition = move(board, length, currentPosition, nextColor, 'u');	// moves block up
+					if (checkFour(board, length, currentPosition));							// check if match is made
+					else if (checkThree(board, length, currentPosition));					// check if match is made
+					else if (checkTwo(board, length, currentPosition));						// check if match is made
+					nextColor = newColor();													// resets nextColor
+					printUpcoming(nextColor);												// prints nextColor
 				}
-				trapped = isTrapped(board, length, currentPosition);
+				trapped = isTrapped(board, length, currentPosition);						// checks if trapped
 				break;
 			case 'S': // Right
 				if (currentPosition == 9 || currentPosition == 19 || currentPosition == 29 || currentPosition == 39 || currentPosition == 49 || currentPosition == 59 || currentPosition == 69 || currentPosition == 79 || currentPosition == 89 || currentPosition == 99 || currentPosition == 109 || currentPosition == 119 || currentPosition == 129 || currentPosition == 139 || currentPosition == 149)
+					// checks if out of board
 				{
 					printf("Out of Board. Make another move.\n");
 				}
 				else if (board[currentPosition + 1].color == 3)
 				{
-					currentPosition = move(board, length, currentPosition, nextColor, 'r');
-					if (checkFour(board, length, currentPosition));
-					else if (checkThree(board, length, currentPosition));
-					else if (checkTwo(board, length, currentPosition));
-					nextColor = newColor();
-					printUpcoming(nextColor);
+					currentPosition = move(board, length, currentPosition, nextColor, 'r');	// moves block right
+					if (checkFour(board, length, currentPosition));							// check if match is made
+					else if (checkThree(board, length, currentPosition));					// check if match is made
+					else if (checkTwo(board, length, currentPosition));						// check if match is made
+					nextColor = newColor();													// resets nextColor
+					printUpcoming(nextColor);												// prints nextColor
 				}
-				trapped = isTrapped(board, length, currentPosition);
+				trapped = isTrapped(board, length, currentPosition);						// checks if trapped
 				break;
 			case 'T': // Down
 				if (currentPosition >= 140 && currentPosition <= 149)
+					// checks if out of board
 				{
 					printf("Out of Board. Make another move.\n");
 				}
 				else if (board[currentPosition + 10].color == 3)
 				{
-					currentPosition = move(board, length, currentPosition, nextColor, 'd');
-					if (checkFour(board, length, currentPosition));
-					else if (checkThree(board, length, currentPosition));
-					else if (checkTwo(board, length, currentPosition));
-					nextColor = newColor();
-					printUpcoming(nextColor);
+					currentPosition = move(board, length, currentPosition, nextColor, 'd');	// moves block down
+					if (checkFour(board, length, currentPosition));							// check if match is made
+					else if (checkThree(board, length, currentPosition));					// check if match is made
+					else if (checkTwo(board, length, currentPosition));						// check if match is made
+					nextColor = newColor();													// resets nextColor
+					printUpcoming(nextColor);												// prints nextColor
 				}
-				trapped = isTrapped(board, length, currentPosition);
+				trapped = isTrapped(board, length, currentPosition);						// checks if trapped
 				break;
 			case 'Q': // Left
 				if (currentPosition == 0 || currentPosition == 10 || currentPosition == 20 || currentPosition == 30 || currentPosition == 40 || currentPosition == 50 || currentPosition == 60 || currentPosition == 70 || currentPosition == 80 || currentPosition == 90 || currentPosition == 100 || currentPosition == 110 || currentPosition == 120 || currentPosition == 130 || currentPosition == 140)
+					// checks if out of board
 				{
 					printf("Out of Board. Make another move.\n");
 				}
 				else if (board[currentPosition - 1].color == 3)
 				{
-					currentPosition = move(board, length, currentPosition, nextColor, 'l');
-					if (checkFour(board, length, currentPosition));
-					else if (checkThree(board, length, currentPosition));
-					else if (checkTwo(board, length, currentPosition));
-					nextColor = newColor();
-					printUpcoming(nextColor);
+					currentPosition = move(board, length, currentPosition, nextColor, 'l');	// moves block left
+					if (checkFour(board, length, currentPosition));							// check if match is made
+					else if (checkThree(board, length, currentPosition));					// check if match is made
+					else if (checkTwo(board, length, currentPosition));						// check if match is made
+					nextColor = newColor();													// resets nextColor
+					printUpcoming(nextColor);												// prints nextColor
 				}
-				trapped = isTrapped(board, length, currentPosition);
+				trapped = isTrapped(board, length, currentPosition);						// checks if trapped
 				break;
-			case 'q':
+			case 'q': // quits
 				return 0;
 		}
-		if (trapped) break;
+		if (trapped) break;		// if trapped, ends function
 	}
 	return 0;
 }
-
-// Attack
-
-
-/*void playPirate()
-{
-	PirateShip BlackPearl = {0.0, 0.0, 0.0, 1001, 125, 125, 2, 4, 100, "Black", "SEA", "null"};
-	AttackStats attack;
-	printStart(&BlackPearl);
-	pirateLife(&BlackPearl, &attack);
-}*/
 
 // Rum
 void drawBlackHair()
 {
 	XPoint hair[10];
-	gfx_color(0, 0, 0);	//black
+	gfx_color(0, 0, 0);		//black
 	
+	// set paramaters
 	hair[0].x = 450;
 	hair[0].y = 280;
 	hair[1].x = 410;
@@ -751,6 +1038,7 @@ void drawFace()
 	XPoint face[13];
 	gfx_color(229, 165, 108);	//skin tone
 	
+	// set paramaters
 	face[0].x = 450;
 	face[0].y = 280;
 	face[1].x = 460;
@@ -786,6 +1074,7 @@ void drawLips()
 	XPoint lips[9];
 	gfx_color(255, 204, 204);	//peach
 	
+	// set paramaters
 	lips[0].x = 470;
 	lips[0].y = 450;
 	lips[1].x = 480;
@@ -813,6 +1102,7 @@ void drawMushtache()
 	XPoint mushtache[8];
 	gfx_color(38, 20, 9);	//dark brown
 	
+	// set paramaters
 	mushtache[0].x = 453;
 	mushtache[0].y = 410;
 	mushtache[1].x = 450;
@@ -838,6 +1128,7 @@ void drawTeeth()
 	XPoint teeth[4];
 	gfx_color(255, 255, 255);	//white
 	
+	// set paramaters
 	teeth[0].x = 480;
 	teeth[0].y = 455;
 	teeth[1].x = 480;
@@ -850,11 +1141,12 @@ void drawTeeth()
 	gfx_fill_polygon(teeth, 4);
 }
 
-void drawBeard() //12
+void drawBeard()
 {
 	XPoint beard[12];
 	gfx_color(38, 20, 9);	//dark brown
 	
+	// set paramaters
 	beard[0].x = 490;
 	beard[0].y = 520;
 	beard[1].x = 485;
@@ -883,12 +1175,13 @@ void drawBeard() //12
 	gfx_fill_polygon(beard, 12);
 }
 
-void drawEyebrows() //left 4 //right 8
+void drawEyebrows() 
 {
 	// Left
 	XPoint left[4];
 	gfx_color(38, 20, 9);	//dark brown
 	
+	// set paramaters
 	left[0].x = 450;
 	left[0].y = 280;
 	left[1].x = 480;
@@ -903,9 +1196,10 @@ void drawEyebrows() //left 4 //right 8
 	// Right
 	XPoint right[8];
 	
+	// set paramaters
 	right[0].x = 520;
 	right[0].y = 300;
-	right[1].x = 530; // 3 or 5
+	right[1].x = 530;
 	right[1].y = 310;
 	right[2].x = 570;
 	right[2].y = 280;
@@ -923,11 +1217,12 @@ void drawEyebrows() //left 4 //right 8
 	gfx_fill_polygon(right, 8);
 }
 
-void drawNostril() //3
+void drawNostril()
 {
 	XPoint nostril[3];
 	gfx_color(0, 0, 0);	//black
 	
+	// set paramaters
 	nostril[0].x = 480;
 	nostril[0].y = 400;
 	nostril[1].x = 500;
@@ -938,18 +1233,19 @@ void drawNostril() //3
 	gfx_fill_polygon(nostril, 3);
 }
 
-void drawEye() //white 5 //pupil 4
+void drawEye()
 {
 	// White
 	XPoint white[5];
 	gfx_color(255, 255, 255);	//white
 	
+	// set paramaters
 	white[0].x = 520;
 	white[0].y = 340;
 	white[1].x = 545;
 	white[1].y = 350;
 	white[2].x = 580;
-	white[2].y = 320; // 3 or 5
+	white[2].y = 320; 
 	white[3].x = 570;
 	white[3].y = 305;
 	white[4].x = 540;
@@ -959,8 +1255,9 @@ void drawEye() //white 5 //pupil 4
 	
 	// Pupil
 	XPoint pupil[4];
-	gfx_color(0, 0, 0);	//black
+	gfx_color(0, 0, 0);		//black
 	
+	// set paramaters
 	pupil[0].x = 520;
 	pupil[0].y = 340;
 	pupil[1].x = 545;
@@ -973,11 +1270,12 @@ void drawEye() //white 5 //pupil 4
 	gfx_fill_polygon(pupil, 4);
 }
 
-void drawBrownHair() //14
+void drawBrownHair() 
 {
 	XPoint hair[14];
 	gfx_color(15, 8, 3);	//brown
 	
+	// set paramaters
 	hair[0].x = 680;
 	hair[0].y = 240;
 	hair[1].x = 600;
@@ -1013,8 +1311,9 @@ void drawBrownHair() //14
 void drawHat() //6
 {
 	XPoint hat[6];
-	gfx_color(123, 26, 21);	//dark red
+	gfx_color(123, 26, 21);		//dark red
 	
+	// set paramaters
 	hat[0].x = 440;
 	hat[0].y = 282;
 	hat[1].x = 460;
@@ -1033,7 +1332,7 @@ void drawHat() //6
 
 void printRum()
 {
-	gfx_color(0, 0, 0); //black
+	gfx_color(0, 0, 0); 	//black
 	gfx_changefont("lucidasanstypewriter-bold-24");
 	gfx_text(120, 240, "WHY IS");
 	gfx_text(120, 320, "THE RUM");
@@ -1049,22 +1348,20 @@ void printRum()
 
 
 void drinkRum()
+	/* runs Rum screen */
 {
 	char c;
 	int xsize = 800, ysize =  800;
 	
-	gfx_open(xsize, ysize, "Rum");
-	gfx_clear();
-	
 	while (1)
 	{
-		gfx_color(102, 152, 182);
-		gfx_fill_rectangle(0, 0, xsize, ysize);
+		gfx_color(102, 152, 182);				// sets drawing color to shade of blue
+		gfx_fill_rectangle(0, 0, xsize, ysize);	// draws background
 		
 		drawBlackHair();
 		drawFace();
-		gfx_color(0, 0, 0);
-		gfx_line(445, 385, 480, 300); // nose line
+		gfx_color(0, 0, 0);						// set drawing color to black
+		gfx_line(445, 385, 480, 300); 			// nose line
 		drawLips();
 		drawMushtache();
 		drawTeeth();
@@ -1077,7 +1374,7 @@ void drinkRum()
 		printRum();
 		
 		c = gfx_wait();
-		if (c == 'q') break;
+		if (c == 'q') break;		// quits if 'q' pressed
 	}
 }
 
