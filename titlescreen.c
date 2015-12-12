@@ -7,17 +7,10 @@ int main ()
 {
 	char c;
 	int X, Y, check;
-	int xsize = 800, ysize = 800, minixsize = 400, miniysize = 750;
+	int xsize = 400, ysize = 750, minixsize = 400, miniysize = 750;
 	int treasure;
 
-	/*// Set Up Window
 	gfx_open(xsize, ysize, "YoHo: A Pirate's Life");
-	gfx_clear();
-	
-	// Draw Window
-	printBackground(xsize, ysize);
-	printTitle();
-	printMenu();*/
 	printTitleScreen(xsize, ysize);
 	
 	while(1)
