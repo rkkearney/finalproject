@@ -1,12 +1,12 @@
-titlescreen: titlescreen.o titlescreenfunc.o
-	gcc titlescreen.o titlescreenfunc.o gfx4.o -lm -lX11 -o titlescreen 
+final: final.o finalfunc.o
+	gcc final.o finalfunc.o gfx4.o -lm -lX11 -o final 
 
-titlescreen.o: titlescreen.c titlescreenfunc.h
-	gcc -c titlescreen.c -o titlescreen.o
+final.o: final.c finalfunc.h
+	gcc -c final.c -o final.o
 
-titlescreenfunc.o: titlescreenfunc.c
-	gcc -c titlescreenfunc.c gfx4.o -o titlescreenfunc.o
+finalfunc.o: finalfunc.c
+	gcc -c finalfunc.c gfx4.o -o finalfunc.o
 
 clean:
-	rm *.o titlescreen
+	rm *.o final
 
