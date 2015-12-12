@@ -7,8 +7,8 @@ int main ()
 {
 	char c;
 	int X, Y, check;
-	// int xsize = 800, ysize = 800, minixsize = 400, miniysize = 750;
-	int xsize = 400, ysize = 750, minixsize = 400, miniysize = 750;
+	// int xsize = 400, ysize = 750, minixsize = 400, miniysize = 750;
+	int xsize = 800, ysize = 800, minixsize = 400, miniysize = 750;
 	int treasure;
 
 	gfx_open(xsize, ysize, "YoHo: A Pirate's Life");
@@ -31,21 +31,10 @@ int main ()
 						break;
 					case 1: // Attack
 					case 2: // Treasure
-						/*gfx_open(minixsize, miniysize, "Mini Game");
-						gfx_clear();
-						if (check == 1)
-						{
-							printf("Attack!!\n");
-						}
-						if (check == 2)
-						{
-							treasure = treasureHunt();
-						}*/
 						playGame(minixsize, miniysize, check);
 						break;
 					case 3: // Rum
-						break;
-					case 4: // Store
+						drinkRum();
 						break;
 				}
 				break;

@@ -13,35 +13,29 @@ int checkZone(int X, int Y)
 {
 	int option;
 	
-	/*if ((X >= 100 && X <= 350) && (Y >= 275 && Y <= 375)) option = 1;
-	else if ((X >= 450 && X <= 700) && (Y >= 275 && Y <= 375)) option = 2;
-	else if ((X >= 275 && X <= 525) && (Y >= 450 && Y <= 550)) option = 3;
-	else if ((X >= 100 && X <= 350) && (Y >= 625 && Y <= 725)) option = 4;
-	else if ((X >= 450 && X <= 700) && (Y >= 625 && Y <= 725)) option = 0;
-	else option = 5;*/
-	if ((X >= 25 && X <= 175) && (Y >= 225 && Y <= 325)) option = 1;
-	else if ((X >= 225 && X <= 375) && (Y >= 225 && Y <= 325)) option = 2;
-	else if ((X >= 125 && X <= 275) && (Y >= 400 && Y <= 500)) option = 3;
-	else if ((X >= 25 && X <= 175) && (Y >= 575 && Y <= 675)) option = 4;
-	else if ((X >= 225 && X <= 375) && (Y >= 575 && Y <= 675)) option = 0;
+	if ((X >= 25 && X <= 175) && (Y >= 225 && Y <= 375)) option = 1;
+	else if ((X >= 225 && X <= 375) && (Y >= 225 && Y <= 375)) option = 2;
+	//else if ((X >= 125 && X <= 275) && (Y >= 400 && Y <= 500)) option = 3;
+	else if ((X >= 25 && X <= 175) && (Y >= 525 && Y <= 675)) option = 3;
+	else if ((X >= 225 && X <= 375) && (Y >= 525 && Y <= 675)) option = 0;
 	else option = 5;
 	return option;
 }
 
 void printMenu()
 {
-	printBox(25, 225, "Attack Ships", 55, 275);
-	printBox(225, 225, "Hunt for Treasure", 240, 275);
-	printBox(125, 400, "Drink Rum", 165, 450);
-	printBox(25, 575, "Go to the Market", 45, 625);
-	printBox(225, 575, "Quit", 285, 625);
+	printBox(25, 225, "Attack Ships", 55, 300);
+	printBox(225, 225, "Hunt for Treasure", 240, 300);
+	// printBox(125, 400, "Drink Rum", 165, 450);
+	printBox(25, 525, "Drink Rum", 65, 600);
+	printBox(225, 525, "Quit", 285, 600);
 }
 
 void printBox(int x, int y, char * title, int xt, int yt)
 {
 	// box
 	gfx_color(51, 25, 0); //brown
-	gfx_fill_rectangle(x, y, 150, 100);
+	gfx_fill_rectangle(x, y, 150, 150);
 	
 	// text
 	gfx_color(255, 255, 255); //white
@@ -73,17 +67,13 @@ void printTitle()
 	
 }
 
-int playGame(int xsize, int ysize, int c)
+void playGame(int c)
 {
-	int gold = 0;
-	
 	// gfx_open(xsize, ysize, "Mini Game");
 	gfx_clear();
 	
-	if (c == 1) playPirate();
-	else if (c == 2) gold = treasureHunt();
-	
-	return gold;
+	if (c == 1) ; // playPirate();
+	else if (c == 2) treasureHunt();
 }
 
 void printTitleScreen(int xsize, int ysize)
@@ -93,8 +83,37 @@ void printTitleScreen(int xsize, int ysize)
 
 	// Draw Window
 	printBackground(xsize, ysize);
+	printShip();
 	printTitle();
 	printMenu();
+}
+
+void printShip()
+{
+	int X = 600, Y = 600;
+	
+	XPoint base[4];
+	XPoint sail[3];
+	base[0].x = X - 70;
+	base[0].y = Y - 20;
+	base[1].x = X + 70;
+	base[1].y = Y - 20;
+	base[2].x = X + 40;
+	base[2].y = Y + 20;
+	base[3].x = X - 40;
+	base[3].y = Y + 20;
+	
+	sail[0].x = X;
+	sail[0].y = Y - 100;
+	sail[1].x = X + 70;
+	sail[1].y = Y - 25;
+	sail[2].x = X - 40;
+	sail[2].y = Y - 25;	
+	
+	gfx_color(74, 64, 25);	//wood brown
+	gfx_fill_polygon(base, 4);
+	gfx_color(0, 0, 0);		//black
+	gfx_fill_polygon(sail, 3);
 }
 
 // Treasure
@@ -181,10 +200,7 @@ void randTreasure(struct Blocks board[], int length)
 	for (i = 0; i < 10; i++)
 	{
 		x = rand() % 150; // get random place for treasure
-		if (x == 74)
-		{
-			x + (rand() % 10);
-		}
+		if (x == 74) x + (rand() % 10);
 		board[x].treasure = 1; // set position as treasure
 	}
 }
@@ -218,14 +234,8 @@ void initializePosition(struct Blocks board[], int length)
 	
 	for (i = 0; i < length; i++)
 	{
-		if (i == 74)
-		{
-			board[i].current = 1;
-		}
-		else if (i != 74)
-		{
-			board[i].current = 0;
-		}
+		if (i == 74) board[i].current = 1;
+		else if (i != 74) board[i].current = 0;
 	}
 }
 
@@ -295,14 +305,20 @@ void printText()
 {
 	pickColor(3); // set drwaing color to white
 	// print text
-	gfx_text(70, 15, "Arggg, Matey! Time to find the treasure!");
-	gfx_text(45, 35, "Use arrow keys to move up, down, left, and right.");
-	gfx_text(55, 50, "Match three or more blocks of the same color.");
-	gfx_text(85, 65, "Collect as much treasure as possible.");
-	gfx_text(125, 80, "But don't get trapped!");
-	gfx_text(120, 95, "Click to anywhere to exit.");
-	gfx_text(160, 120, "Good Luck!");
+	gfx_text(43, 15, "Arggg, Matey! Time to find the treasure!");
+	gfx_text(18, 35, "Use arrow keys to move up, down, left, and right.");
+	gfx_text(28, 50, "Match three or more blocks of the same color.");
+	gfx_text(55, 65, "Collect as much treasure as possible.");
+	gfx_text(105, 80, "But don't get trapped!");
+	gfx_text(140, 120, "Good Luck!");
 	gfx_text(335, 110, "Up Next: ");
+	gfx_text(105, 770, "Press 'q' anytime to exit.");
+	
+	gfx_changefont("lucidasanstypewriter-bold-24");
+	pickColor(4);
+	gfx_text(580, 320, "HUNT");
+	gfx_text(585, 360, "for");
+	gfx_text(550, 400, "TREASURE");
 }
 
 int newColor()
@@ -597,16 +613,23 @@ int treasureHunt()
 {
 	char c;
 	int x0 = 0, y0 = 150, w = 40, length = 150, currentPosition = 74;
+	int xsize = 800, ysize = 800;
 	int nextColor, currentColor;
 	int trapped = 0;
 	struct Blocks board[length];
 	
+	printBackground(xsize, ysize);
+	printShip();
+	pickColor(4); // sets color to black
+	gfx_fill_rectangle(0, 0, 400, 150);		// prints box around text
+	gfx_line(400, 0, 400, 750);			// prints side border line
+	gfx_line(0, 750, 400, 750);			// prints bottom border line
 	printText();
-	printUpcoming(3);
+	nextColor = newColor();
+	printUpcoming(nextColor);
 	initializeBoard(board, length, x0, y0, w);
 	printBoard(board, length);
-	nextColor = newColor();
-
+	
 	while (1) {
 		c = gfx_wait();
 		switch (c) {
@@ -674,563 +697,387 @@ int treasureHunt()
 				}
 				trapped = isTrapped(board, length, currentPosition);
 				break;
-			case 1:
+			case 'q':
 				return 0;
 		}
 		if (trapped) break;
 	}
-	
-	// printf("Collected Treasure: %d \n", collectedTreasure);
-	
 	return 0;
 }
 
 // Attack
-#define XSIZE 400
-#define YSIZE 750
-#define XMID 200
-#define YMID 375
-#define CANNONBALLWEIGHT 10
-#define CANNONWEIGHT 1000
-#define SHIPWEIGHT 10000
-#define CANNONPRICE 2000
-#define CANNONBALLPRICE 10
-/*
-typedef struct PirateShip_t
-{
-	double windSpeed, weight, shipSpeed;
-	int gold, life, hp, level, cannons, cannonballs;
-	char FlagColor[10];
-	char Location[15];
-	char Action[20];
-} PirateShip;
-typedef struct Attack_t
-{
-	int enemyShipLvl, enemyGold, enemyLife, enemyHP, enemyCannons, enemyCannonballs, damageToEnemy, hit, enemyHit, damageToMe;
-	char EnemyLocation[10];
-	char EnemyFlagColor[10];
-	char Attack[20];
-	bool win;
-} AttackStats;*/
-//FUNCTIONS
-void rest(PirateShip *myShip)
-{
-	printf("YOU HAVE RESTED AND REPAIRED ALL DAMAGE TO YOUR SHIP.\n");
-	myShip->life = myShip->hp;
-}
 
-void printEnemy(AttackStats *attack)
-{
-	printf("Enemy Ship Lvl : %d\n", attack->enemyShipLvl);
-	printf("Enemy Location : %s\n", attack->EnemyLocation);
-	printf("Enemy Flag Color : %s\n", attack->EnemyFlagColor);
-}
 
-void attackWave(PirateShip *myShip, AttackStats *attack)
-{
-	time_t t;
-	srand(time(&t));
-	char Answer[20];
-	int d = 0;			//distance from user game
-	//Your attack on the enemy
-	if (myShip->cannonballs <= 0)
-	{
-		printf("YOU HAVE NO CANNONBALLS. GO BUY THEM AT THE PORT\n");
-	}
-	else
-	{
-		d = playerShot(attack);
-		if (myShip->cannonballs >= myShip->cannons)
-		{
-			if (d <= 5)
-			{
-				attack->hit = myShip->cannons;
-			}
-			else if (d <= 10)
-			{
-				attack->hit = myShip->cannons - 1;
-			}
-			else if (d <= 20)
-			{
-				attack->hit = myShip->cannons - 2;
-			}
-			else if (d <= 40)
-			{
-				attack->hit = myShip->cannons - 3;
-			}
-			else if (d <= 80)
-			{
-				attack->hit = myShip->cannons - 4;
-			}
-			else if (d <= 160)
-			{
-				attack->hit = myShip->cannons - 5;	
-			}
-			else if (d <= 185)
-			{
-				attack->hit = myShip->cannons - 6;	
-			}
-			attack->damageToEnemy = attack->hit * 10;
-			attack->enemyLife -= attack->damageToEnemy;
-			myShip->cannonballs -= myShip->cannons;
-		}
-		else	//if 0<cannonballs<cannons
-		{
-			if (d <= 10)
-			{
-				attack->hit = myShip->cannonballs;
-			}
-			else if (d <= 20)
-			{
-				attack->hit = myShip->cannonballs - 1;
-			}
-			else if (d <= 40)
-			{
-				attack->hit = myShip->cannonballs - 2;
-			}
-			else if (d <= 80)
-			{
-				attack->hit = myShip->cannonballs - 3;
-			}
-			else if (d <= 160)
-			{
-				attack->hit = myShip->cannonballs - 4;
-			}
-			else if (d <= 320)
-			{
-				attack->hit = myShip->cannonballs - 5;	
-			}
-			else
-			{
-				attack->hit = myShip->cannonballs - 6;	
-			}
-			attack->damageToEnemy = attack->hit * 10;
-			attack->enemyLife -= attack->damageToEnemy;
-			myShip->cannonballs = 0;
-		} 
-		
-	}
-	/*
-	if (myShip->cannonballs >= myShip->cannons)
-	{
-		attack->hit = rand() % myShip->cannons +1;
-		attack->damageToEnemy = attack->hit * 10;
-		attack->enemyLife -= attack->damageToEnemy;
-		myShip->cannonballs -= myShip->cannons;
-	}
-	else if (myShip->cannonballs > 0)
-	{
-		attack->hit = rand() % myShip->cannonballs +1;
-		attack->damageToEnemy = attack->hit * 10;
-		attack->enemyLife -= attack->damageToEnemy;
-		myShip->cannonballs = 0;
-	}
-	else
-	{
-		printf("YOU HAVE NO CANNONBALLS. GO BUY THEM AT THE PORT\n");
-	}*/
-	//enemy attack on you
-	if (attack->enemyCannonballs >= attack->enemyCannons)
-	{
-		attack->enemyHit = rand() % attack->enemyCannons + 1;
-		attack->damageToMe = attack->enemyHit * 10;
-		myShip->life -= attack->damageToMe;
-		attack->enemyCannonballs -= attack->enemyCannons;
-	}
-	else if (attack->enemyCannonballs > 0)
-	{
-		attack->hit = rand() % attack->enemyCannonballs;
-		attack->damageToMe = attack->enemyHit * 10;
-		myShip->life -= attack->damageToMe;
-		attack->enemyCannonballs = 0;
-	}
-	else //enemy has no ammo
-	{
-		attack->enemyLife = 0;
-	}
-
-	//print results of attack
-	printf("Life : %d/%d\n", myShip->life, myShip->hp);
-	printf("Cannonballs left : %d\n", myShip->cannonballs);
-	printf("Enemy Life : %d/%d\n", attack->enemyLife, attack->enemyHP);
-
-	if (myShip->life >= .25 * myShip->hp && attack->enemyLife >= .25 * attack->enemyHP)
-	{
-		printf("BOTH SHIPS ARE STILL SAILING. ATTACK AGAIN? (yes or no)\n");
-		scanf("%s", Answer);
-		if (!strcmp(Answer, "yes"))
-		{
-			attackWave(myShip, attack);
-		}
-		else
-		{
-			printf("YOU ARE BACK AT PORT\n");
-			strcpy(myShip->Location, "PORT");
-		}
-	
-	}
-	else if (myShip->life > attack->enemyLife && myShip->life > 0 || myShip->life >= .25 * myShip->hp && attack->enemyLife < .25 * attack->enemyHP)
-	{
-		printf("YOU SUCCESSFULLY LOOTED THE ENEMY SHIP, GAINED %d GOLD, AND ARE BACK AT PORT\n", attack->enemyGold);
-		myShip->gold += attack->enemyGold;
-		myShip->hp += attack->enemyHP * .1;
-		strcpy(myShip->Location, "PORT");
-		printShipStatus(myShip);
-	}
-	else 
-	{
-		printf("YOUR SHIP HAS BEEN BOARDED. HALF OF YOUR GOLD HAS BEEN PILLAGED. BACK TO PORT AND BETTER LUCK NEXT TIME.\n");
-		myShip->gold -= .5 * myShip->gold;
-		strcpy(myShip->Location, "PORT");
-		printShipStatus(myShip);
-	}
-}
-double shipSpeed(PirateShip *myShip)
-{
-	myShip->weight = SHIPWEIGHT + (myShip->cannons * CANNONWEIGHT) + (myShip->cannonballs * CANNONBALLWEIGHT);
-	printf("Input Wind Speed in Knots --> \n");
-	scanf("%d", myShip->shipSpeed);
-	//buoyancy = xxxxxxx
-	//shipspeed = shipspeed -=buoyancy
-	return myShip->shipSpeed;
-}
-
-void attackShip(PirateShip *myShip, AttackStats *attack)
-{
-	time_t t;
-	srand(time(&t));
-	char Attack[20];
-	if (!strcmp(myShip->Location, "SEA"))
-	{
-		attack->enemyShipLvl = rand() % 3 +1;
-	
-		if (attack->enemyShipLvl == 1)
-		{
-			strcpy(attack->EnemyFlagColor, "yellow");
-			strcpy(attack->EnemyLocation, "SEA");
-			attack->enemyGold = rand() % 1001;
-			attack->enemyLife = rand() % 91 + 10;
-			attack->enemyHP = attack->enemyLife;
-			attack->enemyCannons = rand() % 4 + 1;
-			attack->enemyCannonballs = rand() % 30 + 1;
-		}
-		else if (attack->enemyShipLvl == 2)
-		{
-			strcpy(attack->EnemyFlagColor, "red");
-			strcpy(attack->EnemyLocation, "SEA");
-			attack->enemyGold = rand() % 4000 + 1001;
-			attack->enemyLife = rand() % 200+ 101;
-			attack->enemyHP = attack->enemyLife;
-			attack->enemyCannons = rand() % 4 + 4;
-			attack->enemyCannonballs = rand() % 40 + 31;
-		}
-		else	//if enemy ship lvl == 0
-		{
-			strcpy(attack->EnemyFlagColor, "blue");
-			strcpy(attack->EnemyLocation, "SEA");
-			attack->enemyGold = rand() % 10000 + 5001;
-			attack->enemyLife = rand() % 200+ 301;
-			attack->enemyHP = attack->enemyLife;
-			attack->enemyCannons = rand() % 5 + 8;
-			attack->enemyCannonballs = rand() % 50 + 71;
-		}
-		printEnemy(attack);
-		printf("Attack? (yes or no) : \n");
-		scanf("%s", Attack);
-		if (!strcmp(Attack, "yes"))
-		{
-			attackWave(myShip, attack);	//recursion
-		}
-		else
-		{
-			printf("YOU ARE AT SEA\n");
-			strcpy(myShip->Location, "SEA");
-		}
-	
-	
-	}
-	else
-	{
-		printf("YOU ARE NOT AT SEA\n");
-	}
-	//find and attack random 0-500hp
-	//win = get gold random amount between x and x, x% of defeated ships hp depending on ship level 1,2,3
-	//chance of winning varies random between x and x for levels 1,2,3
-	//level 1 = 10-100hp, 0-3 cannons, 0 - 1000 gold, holds 0-30 cannonballs
-	//level 2 = 101-300hp, 4-7 cannons, 1001 - 5000 gold, holds 31-70 cannonballs
-	//level 3 = 301-500hp, 8-12 cannons, 5001 - 15,000 gold, holds 71 - 120 cannonballs
-}
-
-void goToPort(PirateShip *myShip)
-{
-	strcpy(myShip->Location, "PORT");
-	printf("YOU ARE AT PORT\n");
-}
-void goToSea (PirateShip *myShip)
-{
-	strcpy(myShip->Location, "SEA");
-	printf("YOU ARE AT SEA\n");
-}
-
-void buyCannons(PirateShip *myShip, int number)
-{
-	if (!strcmp(myShip->Location, "PORT"))
-	{
-		if (number * CANNONPRICE < myShip->gold)
-		{
-			myShip->gold -= (number * CANNONPRICE);
-			myShip->cannons += number;
-			printf("YOU HAVE BOUGHT %d CANNONS\n", number);
-		}
-		else
-		{
-			printf("YOU DO NOT HAVE ENOUGH GOLD. GO ATTACK SOME SHIPS.\n");
-		}
-	}
-	else
-	{
-		printf("YOU ARE NOT AT PORT\n");
-	}
-}
-void buyCannonballs(PirateShip *myShip, int number)
-{
-	if (!strcmp(myShip->Location, "PORT"))
-	{
-		if (number * CANNONBALLPRICE < myShip->gold)
-		{
-			myShip->gold -= (number * CANNONBALLPRICE);
-			myShip->cannonballs += number;
-			printf("YOU HAVE BOUGHT %d CANNONBALLS\n", number);
-		}
-		else
-		{
-			printf("YOU DO NOT HAVE ENOUGH GOLD. GO ATTACK SOME SHIPS.\n");
-		}
-	}
-	else
-	{
-		printf("YOU ARE NOT AT PORT\n");
-	}
-}
-
-void printShipStatus(PirateShip *myShip)
-{
-	printf("Location : %s\n", myShip->Location);
-	printf("Flag Color : %s\n", myShip->FlagColor);
-	printf("Life : %d/%d\n", myShip->life, myShip->hp);
-	if (!strcmp(myShip->Location, "SEA"))
-	{
-		printf("Ship Speed : %d\n", myShip->shipSpeed);
-		printf("Total Ship Weight : %d\n", myShip->weight);
-	}
-	printf("# of Cannons : %d\n", myShip->cannons);
-	printf("# of Cannonballs : %d\n", myShip->cannonballs);
-	printf("Gold Pieces : %d\n", myShip->gold);
-	//fix level
-	
-	if (myShip->hp <= 100 || myShip->cannons <= 3)
-	{
-		myShip->level = 1;
-	}
-	else if (myShip->hp > 300 && myShip->cannons > 7)
-	{
-		myShip->level = 3;
-	}
-	else
-	{
-		myShip->level = 2;
-	}
-	printf("Ship Level : %d\n", myShip->level);
-}
-
-void pirateLife(PirateShip *myShip, AttackStats *attack)
-{
-	/*gfx_open(XSIZE, YSIZE, "Target Window");
-	gfx_clear;*/
-	while(1)
-	{
-		int number = 0;
-		printf("=======================================\n");
-		if (myShip->cannonballs <= 0 && myShip->gold < 10)
-		{
-			printf("YOU ARE POOR AND DO NOT HAVE THE SUPPLIES TO ATTACK. YOUR CREW COMMITS MUTINY AND YOU WALK THE PLANK.\n");
-			strcpy(myShip->Action, "end");
-		}
-		else if (myShip->hp >= 300 && myShip->gold > 10000)
-		{
-			printf("YOU ARE A SUCCESSFUL PLUNDERING PIRATE! ENJOY YOUR INFAMY IN YOUR PALACE IN THE CARRIBBEAN.\n");
-			strcpy(myShip->Action, "end");
-		}
-		else
-		{
-			printf("What Would You Like To Do? \ngotoport\ngotosea\nbuycannons\nbuycannonballs\nattackships\nshipstats\nrest\nend\n");
-			printf("=======================================\n");
-			scanf("%s", myShip->Action);
-		}
-		if (!strcmp(myShip->Action, "gotoport"))
-		{
-			goToPort(myShip);
-		}
-		else if (!strcmp(myShip->Action, "gotosea"))
-		{
-			goToSea(myShip);
-		}
-		else if (!strcmp(myShip->Action, "buycannons"))
-		{
-			printf("Cannon Price : %d\n", CANNONPRICE);
-			printf("Input # of Cannons : \n");
-			scanf("%d", &number);
-			buyCannons(myShip, number);
-		}
-		else if (!strcmp(myShip->Action, "buycannonballs"))
-		{
-			printf("Cannonball Price : %d\n", CANNONBALLPRICE);
-			printf("Input # of Cannonballs : \n");
-			scanf("%d", &number);
-			buyCannonballs(myShip, number);
-		}
-		else if (!strcmp(myShip->Action, "attackships"))
-		{
-			attackShip(myShip, attack);
-		}
-		else if (!strcmp(myShip->Action, "shipstats"))
-		{
-			printShipStatus(myShip);
-		}
-		else if (!strcmp(myShip->Action, "rest"))
-		{
-			rest(myShip);
-		}
-		else if (!strcmp(myShip->Action, "end"))
-		{
-			printf("YOUR PIRATE LIFE HAS ENDED\n");
-			printShipStatus(myShip);
-			break;
-		}
-		else
-		{
-			printf("PLEASE TYPE A VALID RESPONSE\n");
-		}
-	}
-}
-void printStart(PirateShip *myShip)
-{
-	printf("WELCOME TO THE PIRATE LIFE!\n");
-	printShipStatus(myShip);
-}
-int playerShot(AttackStats *attack)
-{
-	time_t t;
-	srand(time(&t));
-	int r = 30;					//radius
-	int x = 50, y = YMID;		//starting coordinates
-	int d = 0;		//distance from center target
-	double dx = 0.;		//change in coordinates
-	char c;
-	double deltat = 10000;
-	//Open screen
-	//gfx_open(XSIZE, YSIZE, "Target Window");
-	//gfx_clear;
-	//gfx_clear_color(213, 47, 94);
-	drawEnemy(attack);
-	
-	//change crosshair target speed
-	if(attack->enemyShipLvl == 1)		//level 1 enemy
-	{
-		dx = 1;
-	}
-	else if (attack->enemyShipLvl == 2)		//level 2 enemy
-	{
-		dx = 2;
-	}
-	else		//level 3 enemy
-	{
-		dx = 3;
-	}
-	
-	while (1)
-	{
-		gfx_clear();
-		//gfx_clear_color(213, 47, 94);
-		drawEnemy(attack);
-		//draw white target circle
-		gfx_color(255, 255, 255);
-		gfx_circle(XMID, YMID, r);
-		//draw moving green crosshair circle
-		//gfx_color(82, 199, 104);
-		gfx_color(0, 153, 0);
-		gfx_point(x, y);
-		gfx_circle(x, y, r);
-		gfx_flush();
-		usleep(deltat);
-		
-		//if crosshairs hits edge of screen reverse direction
-		if (x >= XSIZE - r || x <= r)
-		{
-			dx = dx * -1;
-		}
-		//change center of crosshairs
-		x += dx;
-		
-		if (gfx_event_waiting())
-		{
-			c = gfx_wait();
-			if (c == 1)
-			{
-				d = abs(x-XMID);
-				return d;
-				break;
-			}
-		}
-	}	
-}
-void drawEnemy(AttackStats *attack)
-{
-	XPoint base[4];
-	XPoint sail[3];
-	base[0].x = XMID - 70;
-	base[0].y = YMID - 20;
-	base[1].x = XMID + 70;
-	base[1].y = YMID - 20;
-	base[2].x = XMID + 40;
-	base[2].y = YMID + 20;
-	base[3].x = XMID - 40;
-	base[3].y = YMID + 20;
-	
-	sail[0].x = XMID;
-	sail[0].y = YMID - 100;
-	sail[1].x = XMID + 70;
-	sail[1].y = YMID - 25;
-	sail[2].x = XMID - 40;
-	sail[2].y = YMID - 25;
-	
-	
-	gfx_color(17, 0, 127);							//ocean blue
-	gfx_fill_rectangle(0, YSIZE/2, XSIZE, YSIZE/2);
-	gfx_color(204, 229, 255);						//sky blue
-	gfx_fill_rectangle(0, 0, XSIZE, YSIZE/2);
-	gfx_color(74, 64, 25);							//wood brown
-	gfx_fill_polygon(base, 4);
-	if(!strcmp(attack->EnemyFlagColor, "yellow"))
-	{
-		gfx_color(255, 255, 102);	//yellow flag
-	}
-	else if(!strcmp(attack->EnemyFlagColor, "red"))
-	{
-		gfx_color(204, 0, 0);	//red flag
-	}
-	else		//blue flag
-	{
-		gfx_color(32, 106, 255);
-	}
-	gfx_fill_polygon(sail, 3);
-}
-
-void playPirate()
+/*void playPirate()
 {
 	PirateShip BlackPearl = {0.0, 0.0, 0.0, 1001, 125, 125, 2, 4, 100, "Black", "SEA", "null"};
 	AttackStats attack;
 	printStart(&BlackPearl);
 	pirateLife(&BlackPearl, &attack);
+}*/
+
+// Rum
+void drawBlackHair()
+{
+	XPoint hair[10];
+	gfx_color(0, 0, 0);	//black
+	
+	hair[0].x = 450;
+	hair[0].y = 280;
+	hair[1].x = 410;
+	hair[1].y = 400;
+	hair[2].x = 430;
+	hair[2].y = 440;
+	hair[3].x = 445;
+	hair[3].y = 420;
+	hair[4].x = 400;
+	hair[4].y = 600;
+	hair[5].x = 460;
+	hair[5].y = 560;
+	hair[6].x = 470;
+	hair[6].y = 520;
+	hair[7].x = 425;
+	hair[7].y = 800;
+	hair[8].x = 570;
+	hair[8].y = 800;
+	hair[9].x = 560;
+	hair[9].y = 400;
+	
+	gfx_fill_polygon(hair, 10);
+}
+
+void drawFace()
+{
+	XPoint face[13];
+	gfx_color(229, 165, 108);	//skin tone
+	
+	face[0].x = 450;
+	face[0].y = 280;
+	face[1].x = 460;
+	face[1].y = 345;
+	face[2].x = 445;
+	face[2].y = 385;
+	face[3].x = 455;
+	face[3].y = 400;
+	face[4].x = 450;
+	face[4].y = 440;
+	face[5].x = 480;
+	face[5].y = 455;
+	face[6].x = 480;
+	face[6].y = 465;
+	face[7].x = 465;
+	face[7].y = 480;
+	face[8].x = 490;
+	face[8].y = 520;
+	face[9].x = 560;
+	face[9].y = 540;
+	face[10].x = 560;
+	face[10].y = 680;
+	face[11].x = 660;
+	face[11].y = 640;
+	face[12].x = 690;
+	face[12].y = 240;
+	
+	gfx_fill_polygon(face, 13);
+}
+
+void drawLips()
+{
+	XPoint lips[9];
+	gfx_color(255, 204, 204);	//peach
+	
+	lips[0].x = 470;
+	lips[0].y = 450;
+	lips[1].x = 480;
+	lips[1].y = 455;
+	lips[2].x = 480;
+	lips[2].y = 465;
+	lips[3].x = 465;
+	lips[3].y = 480;
+	lips[4].x = 520;
+	lips[4].y = 480;
+	lips[5].x = 555;
+	lips[5].y = 477;
+	lips[6].x = 550;
+	lips[6].y = 460;
+	lips[7].x = 520;
+	lips[7].y = 435;
+	lips[8].x = 450;
+	lips[8].y = 440;
+	
+	gfx_fill_polygon(lips, 9);
+}
+
+void drawMushtache()
+{
+	XPoint mushtache[8];
+	gfx_color(38, 20, 9);	//dark brown
+	
+	mushtache[0].x = 453;
+	mushtache[0].y = 410;
+	mushtache[1].x = 450;
+	mushtache[1].y = 440;
+	mushtache[2].x = 470;
+	mushtache[2].y = 450;
+	mushtache[3].x = 480;
+	mushtache[3].y = 440;
+	mushtache[4].x = 500;
+	mushtache[4].y = 440;
+	mushtache[5].x = 580;
+	mushtache[5].y = 480;
+	mushtache[6].x = 560;
+	mushtache[6].y = 450;
+	mushtache[7].x = 510;
+	mushtache[7].y = 420;
+	
+	gfx_fill_polygon(mushtache, 8);
+}
+
+void drawTeeth()
+{
+	XPoint teeth[4];
+	gfx_color(255, 255, 255);	//white
+	
+	teeth[0].x = 480;
+	teeth[0].y = 455;
+	teeth[1].x = 480;
+	teeth[1].y = 465;
+	teeth[2].x = 550;
+	teeth[2].y = 475;
+	teeth[3].x = 510;
+	teeth[3].y = 450;
+
+	gfx_fill_polygon(teeth, 4);
+}
+
+void drawBeard() //12
+{
+	XPoint beard[12];
+	gfx_color(38, 20, 9);	//dark brown
+	
+	beard[0].x = 490;
+	beard[0].y = 520;
+	beard[1].x = 485;
+	beard[1].y = 550;
+	beard[2].x = 520;
+	beard[2].y = 570;
+	beard[3].x = 540;
+	beard[3].y = 560;
+	beard[4].x = 560;
+	beard[4].y = 540;
+	beard[5].x = 660;
+	beard[5].y = 495;
+	beard[6].x = 660;
+	beard[6].y = 480;
+	beard[7].x = 560;
+	beard[7].y = 520;
+	beard[8].x = 520;
+	beard[8].y = 520;
+	beard[9].x = 510;
+	beard[9].y = 490;
+	beard[10].x = 495;
+	beard[10].y = 490;
+	beard[11].x = 505;
+	beard[11].y = 520;
+	
+	gfx_fill_polygon(beard, 12);
+}
+
+void drawEyebrows() //left 4 //right 8
+{
+	// Left
+	XPoint left[4];
+	gfx_color(38, 20, 9);	//dark brown
+	
+	left[0].x = 450;
+	left[0].y = 280;
+	left[1].x = 480;
+	left[1].y = 300;
+	left[2].x = 470;
+	left[2].y = 310;
+	left[3].x = 450;
+	left[3].y = 290;
+
+	gfx_fill_polygon(left, 4);
+	
+	// Right
+	XPoint right[8];
+	
+	right[0].x = 520;
+	right[0].y = 300;
+	right[1].x = 530; // 3 or 5
+	right[1].y = 310;
+	right[2].x = 570;
+	right[2].y = 280;
+	right[3].x = 610;
+	right[3].y = 280;
+	right[4].x = 615;
+	right[4].y = 290;
+	right[5].x = 620;
+	right[5].y = 290;
+	right[6].x = 615;
+	right[6].y = 275;
+	right[7].x = 560;
+	right[7].y = 270;
+	
+	gfx_fill_polygon(right, 8);
+}
+
+void drawNostril() //3
+{
+	XPoint nostril[3];
+	gfx_color(0, 0, 0);	//black
+	
+	nostril[0].x = 480;
+	nostril[0].y = 400;
+	nostril[1].x = 500;
+	nostril[1].y = 400;
+	nostril[2].x = 505;
+	nostril[2].y = 410;
+
+	gfx_fill_polygon(nostril, 3);
+}
+
+void drawEye() //white 5 //pupil 4
+{
+	// White
+	XPoint white[5];
+	gfx_color(255, 255, 255);	//white
+	
+	white[0].x = 520;
+	white[0].y = 340;
+	white[1].x = 545;
+	white[1].y = 350;
+	white[2].x = 580;
+	white[2].y = 320; // 3 or 5
+	white[3].x = 570;
+	white[3].y = 305;
+	white[4].x = 540;
+	white[4].y = 310;
+
+	gfx_fill_polygon(white, 5);
+	
+	// Pupil
+	XPoint pupil[4];
+	gfx_color(0, 0, 0);	//black
+	
+	pupil[0].x = 520;
+	pupil[0].y = 340;
+	pupil[1].x = 545;
+	pupil[1].y = 350;
+	pupil[2].x = 550;
+	pupil[2].y = 305;
+	pupil[3].x = 540;
+	pupil[3].y = 310;
+	
+	gfx_fill_polygon(pupil, 4);
+}
+
+void drawBrownHair() //14
+{
+	XPoint hair[14];
+	gfx_color(15, 8, 3);	//brown
+	
+	hair[0].x = 680;
+	hair[0].y = 240;
+	hair[1].x = 600;
+	hair[1].y = 560;
+	hair[2].x = 640;
+	hair[2].y = 520;
+	hair[3].x = 660;
+	hair[3].y = 440;
+	hair[4].x = 660;
+	hair[4].y = 760;
+	hair[5].x = 690;
+	hair[5].y = 720;
+	hair[6].x = 720;
+	hair[6].y = 600;
+	hair[7].x = 720;
+	hair[7].y = 720;
+	hair[8].x = 680;
+	hair[8].y = 800;
+	hair[9].x = 720;
+	hair[9].y = 800;
+	hair[10].x = 760;
+	hair[10].y = 700;
+	hair[11].x = 760;
+	hair[11].y = 800;
+	hair[12].x = 800;
+	hair[12].y = 800;
+	hair[13].x = 800;
+	hair[13].y = 240;
+	
+	gfx_fill_polygon(hair, 14);
+}
+
+void drawHat() //6
+{
+	XPoint hat[6];
+	gfx_color(123, 26, 21);	//dark red
+	
+	hat[0].x = 440;
+	hat[0].y = 282;
+	hat[1].x = 460;
+	hat[1].y = 130;
+	hat[2].x = 540;
+	hat[2].y = 40;
+	hat[3].x = 640;
+	hat[3].y = 40;
+	hat[4].x = 800;
+	hat[4].y = 90;
+	hat[5].x = 800;
+	hat[5].y = 240;
+	
+	gfx_fill_polygon(hat, 6);
+}
+
+void printRum()
+{
+	gfx_color(0, 0, 0); //black
+	gfx_changefont("lucidasanstypewriter-bold-24");
+	gfx_text(120, 240, "WHY IS");
+	gfx_text(120, 320, "THE RUM");
+	gfx_text(120, 400, "ALWAYS");
+	gfx_text(120, 480, "GONE?");
+	
+	gfx_changefont("lucidasanstypewriter-bold-18");
+	gfx_text(150, 540, "- Jack Sparrow");
+	
+	gfx_changefont("lucidasanstypewriter-bold-12");
+	gfx_text(120, 760, "To exit, press 'q'.");
+}
+
+
+void drinkRum()
+{
+	char c;
+	int xsize = 800, ysize =  800;
+	
+	gfx_open(xsize, ysize, "Rum");
+	gfx_clear();
+	
+	while (1)
+	{
+		gfx_color(102, 152, 182);
+		gfx_fill_rectangle(0, 0, xsize, ysize);
+		
+		drawBlackHair();
+		drawFace();
+		gfx_color(0, 0, 0);
+		gfx_line(445, 385, 480, 300); // nose line
+		drawLips();
+		drawMushtache();
+		drawTeeth();
+		drawBeard();
+		drawEyebrows();
+		drawNostril();
+		drawEye();
+		drawBrownHair();
+		drawHat();
+		printRum();
+		
+		c = gfx_wait();
+		if (c == 'q') break;
+	}
 }
 
