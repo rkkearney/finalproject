@@ -1,3 +1,7 @@
+// Author: Reilly Kearney and Ronni Sardina
+// Date: 12/13/2015
+// Final Project: YoHo! a pirate's life
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -59,7 +63,7 @@ void printBackground(int xsize, int ysize)
 void printTitle()
 {
 	gfx_color(0, 0, 0);			//black
-	//gfx_changefont("arial-bold-24");
+	gfx_changefont("lucidasanstypewriter-bold-24");
 	gfx_text(175, 75, "YoHo!");
 	gfx_text(100, 125, "a pirate's life");
 	
@@ -322,7 +326,9 @@ void winScreen()
 	barrel();
 	chest();
 	gfx_color(0, 0, 0);
-	gfx_text(120, 80, "Take what you can, give nothing back! It's a Pirate's Life for me. Savvy?");
+	gfx_changefont("lucidasanstypewriter-bold-18");
+	gfx_text(50, 100, "Take what you can, give nothing back! It's a Pirate's Life for me.");
+	gfx_text(780, 140, "Savvy?");
 }
 
 void loseScreen()
@@ -331,7 +337,8 @@ void loseScreen()
 	gfx_color(0, 0, 0);	//sky blue
 	gfx_fill_rectangle(0, 0, XSIZE, YSIZE);
 	gfx_color(255, 255, 255);
-	gfx_text(120, 80, "You are without doubt the worst pirate I've ever heard of.");
+	gfx_changefont("lucidasanstypewriter-bold-18");
+	gfx_text(90, 80, "You are without doubt the worst pirate I've ever heard of.");
 	skull();
 }
 
@@ -824,7 +831,7 @@ void printText()
 	gfx_text(335, 110, "Up Next: ");
 	gfx_text(105, 770, "Press 'q' anytime to exit.");
 	
-	//gfx_changefont("arial-bold-24");		// change font for title
+	gfx_changefont("lucidasanstypewriter-bold-24");		// change font for title
 	pickColor(4);										// change drawing color to black
 	gfx_text(580, 320, "HUNT");
 	gfx_text(585, 360, "for");
@@ -1564,16 +1571,16 @@ void drawHat() //6
 void printRum()
 {
 	gfx_color(0, 0, 0); 	//black
-	//gfx_changefont("arial-bold-24");
+	gfx_changefont("lucidasanstypewriter-bold-24");
 	gfx_text(120, 240, "WHY IS");
 	gfx_text(120, 320, "THE RUM");
 	gfx_text(120, 400, "ALWAYS");
 	gfx_text(120, 480, "GONE?");
 	
-	//gfx_changefont("arial-bold-18");
+	gfx_changefont("lucidasanstypewriter-bold-18");
 	gfx_text(150, 540, "- Jack Sparrow");
 	
-	//gfx_changefont("arial-bold-12");
+	gfx_changefont("lucidasanstypewriter-bold-12");
 	gfx_text(120, 760, "To exit, press 'q'.");
 }
 

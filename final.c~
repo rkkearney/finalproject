@@ -1,7 +1,11 @@
+// Author: Reilly Kearney and Ronni Sardina
+// Date: 12/13/2015
+// Final Project:
+
 #include <stdio.h>
 #include <math.h>
 #include "gfx4.h"
-#include "titlescreenfunc.h"
+#include "finalfunc.h"
 
 int main ()
 {

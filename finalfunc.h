@@ -1,3 +1,7 @@
+// Author: Reilly Kearney and Ronni Sardina
+// Date: 12/13/2015
+// Final Project: YoHo! a pirate's life
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
