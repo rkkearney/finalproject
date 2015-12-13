@@ -55,8 +55,6 @@ void chest();
 
 void barrel();
 
-void skull();
-
 // TREASURE FUNCTIONS
 struct Blocks {
 	int x;

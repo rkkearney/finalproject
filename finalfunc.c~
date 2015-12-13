@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "gfx4.h"
-#include "titlescreenfunc.h"
+#include "finalfunc.h"
 
 // Title
 int checkZone(int X, int Y)
@@ -59,7 +59,7 @@ void printBackground(int xsize, int ysize)
 void printTitle()
 {
 	gfx_color(0, 0, 0);			//black
-	gfx_changefont("lucidasanstypewriter-bold-24");
+	//gfx_changefont("arial-bold-24");
 	gfx_text(175, 75, "YoHo!");
 	gfx_text(100, 125, "a pirate's life");
 	
@@ -79,33 +79,113 @@ void printTitleScreen(int xsize, int ysize)
 
 void printShip()
 {
-	int X = 600, Y = 600;
-	
+		
 	// set parameters for base
-	XPoint base[4];
-	base[0].x = X - 70;
-	base[0].y = Y - 20;
-	base[1].x = X + 70;
-	base[1].y = Y - 20;
-	base[2].x = X + 40;
-	base[2].y = Y + 20;
-	base[3].x = X - 40;
-	base[3].y = Y + 20;
+	XPoint base[12];
+	base[0].x = 448;
+	base[0].y = 584;
+	base[1].x = 496;
+	base[1].y = 584;
+	base[2].x = 496;
+	base[2].y = 600;
+	base[3].x = 528;
+	base[3].y = 600;
+	base[4].x = 528;
+	base[4].y = 616;
+	base[5].x = 656;
+	base[5].y = 616;
+	base[6].x = 752;
+	base[6].y = 584;
+	base[7].x = 752;
+	base[7].y = 589;
+	base[8].x = 688;
+	base[8].y = 616;
+	base[9].x = 672;
+	base[9].y = 648;
+	base[10].x = 480;
+	base[10].y = 648;
+	base[11].x = 448;
+	base[11].y = 600;
 
 	// set parameters for sail
-	XPoint sail[3];
-	sail[0].x = X;
-	sail[0].y = Y - 100;
-	sail[1].x = X + 70;
-	sail[1].y = Y - 25;
-	sail[2].x = X - 40;
-	sail[2].y = Y - 25;	
+	XPoint sail[4];
+	sail[0].x = 510;
+	sail[0].y = 456;
+	sail[1].x = 480;
+	sail[1].y = 472;
+	sail[2].x = 432;
+	sail[2].y = 576;
+	sail[3].x = 510;
+	sail[3].y = 576;
 	
+	XPoint sail2[4];
+	sail2[0].x = 520;
+	sail2[0].y = 456;
+	sail2[1].x = 576;
+	sail2[1].y = 472;
+	sail2[2].x = 592;
+	sail2[2].y = 504;
+	sail2[3].x = 520;
+	sail2[3].y = 536;
+	
+	XPoint sail3[4];
+	sail3[0].x = 560;
+	sail3[0].y = 520;
+	sail3[1].x = 592;
+	sail3[1].y = 536;
+	sail3[2].x = 592;
+	sail3[2].y = 600;
+	sail3[3].x = 528;
+	sail3[3].y = 584;
+	
+	XPoint sail4[4];
+	sail4[0].x = 624;
+	sail4[0].y = 464;
+	sail4[1].x = 624;
+	sail4[1].y = 496;
+	sail4[2].x = 592;
+	sail4[2].y = 504;
+	sail4[3].x = 592;
+	sail4[3].y = 472;
+	
+	XPoint sail5[4];
+	sail5[0].x = 640;
+	sail5[0].y = 496;
+	sail5[1].x = 640;
+	sail5[1].y = 528;
+	sail5[2].x = 576;
+	sail5[2].y = 552;
+	sail5[3].x = 576;
+	sail5[3].y = 520;
+	
+	XPoint sail6[3];
+	sail6[0].x = 608;
+	sail6[0].y = 488;
+	sail6[1].x = 752;
+	sail6[1].y = 584;
+	sail6[2].x = 672;
+	sail6[2].y = 584;
+		
+	XPoint sail7[3];
+	sail7[0].x = 624;
+	sail7[0].y = 552;
+	sail7[1].x = 688;
+	sail7[1].y = 592;
+	sail7[2].x = 640;
+	sail7[2].y = 600;
 	// draw
 	gfx_color(74, 64, 25);	//wood brown
-	gfx_fill_polygon(base, 4);
+	gfx_fill_polygon(base, 12);
+	gfx_fill_rectangle(512, 440, 5, 160);
+	gfx_fill_rectangle(603, 456, 5, 160);
 	gfx_color(0, 0, 0);		//black
-	gfx_fill_polygon(sail, 3);
+	gfx_fill_polygon(sail, 4);
+	gfx_fill_polygon(sail2, 4);
+	gfx_fill_polygon(sail3, 4);
+	gfx_fill_polygon(sail4, 4);
+	gfx_fill_polygon(sail5, 4);
+	gfx_fill_polygon(sail6, 3);
+	gfx_fill_polygon(sail7, 3);
 }
 
 // Attack
@@ -177,11 +257,15 @@ void attackWave(PirateShip *myShip, AttackStats *attack)
 		else if (myShip->life > attack->enemyLife && myShip->life > 0 || myShip->life >= .25 * myShip->hp && attack->enemyLife < .25 * attack->enemyHP)
 		{
 			printf("YOU SUCCESSFULLY LOOTED THE ENEMY SHIP\n");
+			winScreen();
+			gfx_wait();
 			n = 0;
 		}
 		else 
 		{
 			printf("YOUR SHIP HAS BEEN BOARDED. BETTER LUCK NEXT TIME.\n");
+			loseScreen();
+			gfx_wait();
 			n = 0;
 		}
 	}
@@ -221,6 +305,158 @@ void attackShip(PirateShip *myShip, AttackStats *attack)
 		}
 	}
 	attackWave(myShip, attack);
+}
+void winScreen()
+{
+	gfx_clear();
+	gfx_color(167, 226, 255);	//sky blue
+	gfx_fill_rectangle(0, 0, XSIZE, YSIZE);
+	gfx_color(232, 223, 194);
+	gfx_fill_rectangle(0, 530, XSIZE, 270);
+	gfx_color(246, 255, 245);
+	gfx_fill_rectangle(0, 490, XSIZE, 40);
+	gfx_color(23, 113, 130);
+	gfx_fill_rectangle(0, 390, XSIZE, 100);
+	gfx_color(0, 28, 46);
+	gfx_fill_rectangle(0, 300, XSIZE, 90);
+	barrel();
+	chest();
+	gfx_color(0, 0, 0);
+	gfx_text(120, 80, "Take what you can, give nothing back! It's a Pirate's Life for me. Savvy?");
+}
+
+void loseScreen()
+{
+	gfx_clear();
+	gfx_color(0, 0, 0);	//sky blue
+	gfx_fill_rectangle(0, 0, XSIZE, YSIZE);
+	gfx_color(255, 255, 255);
+	gfx_text(120, 80, "You are without doubt the worst pirate I've ever heard of.");
+	skull();
+}
+
+void chest()
+{
+	XPoint lid[4];
+	XPoint gold[4];
+	
+	lid[0].x = 360;
+	lid[0].y = 400;
+	lid[1].x = 640;
+	lid[1].y = 400;
+	lid[2].x = 680;
+	lid[2].y = 480;
+	lid[3].x = 320;
+	lid[3].y = 480;
+	gold[0].x = 320;
+	gold[0].y = 480;
+	gold[1].x = 360;
+	gold[1].y = 440;
+	gold[2].x = 640;
+	gold[2].y = 440;
+	gold[3].x = 680;
+	gold[3].y = 480;
+	
+	
+	gfx_color(89, 55, 34);		//chest brown
+	gfx_fill_rectangle(320, 480, 360, 160);
+	gfx_color(34, 21, 13);		//chest lid brown
+	gfx_fill_polygon(lid, 4);
+	gfx_line(320, 520, 680, 520);
+	gfx_line(320, 560, 680, 560);
+	gfx_line(320, 600, 680, 600);
+	gfx_color(242, 183, 5);		//gold
+	gfx_fill_polygon(gold, 4);	
+	
+}
+
+void barrel()
+{
+	XPoint barr[7];
+	barr[0].x = 200;
+	barr[0].y = 320;
+	barr[1].x = 320;
+	barr[1].y = 320;
+	barr[2].x = 360;
+	barr[2].y = 400;
+	barr[3].x = 320;
+	barr[3].y = 600;
+	barr[4].x = 200;
+	barr[4].y = 600;
+	barr[5].x = 160;
+	barr[5].y = 520;
+	barr[6].x = 160;
+	barr[6].y = 400;
+	
+	gfx_color(144, 89, 75);
+	gfx_fill_polygon(barr, 7);
+	gfx_color(55, 34, 21);
+	gfx_fill_rectangle(160, 400, 200, 40);
+	gfx_fill_rectangle(160, 480, 200, 40);
+	
+}
+
+void skull()
+{
+	gfx_color(255, 255, 255);
+	gfx_fill_circle(400, 360, 120);
+	gfx_fill_rectangle(320, 400, 160, 80);
+	gfx_fill_rectangle(360, 480, 80, 40);
+	
+	XPoint bone1[4];
+	bone1[0].x = 200;
+	bone1[0].y = 480;
+	bone1[1].x = 200;
+	bone1[1].y = 500;
+	bone1[2].x = 600;
+	bone1[2].y = 660;
+	bone1[3].x = 600;
+	bone1[3].y = 640;
+	
+	XPoint bone2[4];
+	bone2[0].x = 200;
+	bone2[0].y = 640;
+	bone2[1].x = 200;
+	bone2[1].y = 660;
+	bone2[2].x = 600;
+	bone2[2].y = 500;
+	bone2[3].x = 600;
+	bone2[3].y = 480;
+	
+	gfx_fill_polygon(bone1, 4);
+	gfx_fill_polygon(bone2, 4);
+	gfx_fill_circle(200, 480, 15);
+	gfx_fill_circle(200, 500, 15);
+	gfx_fill_circle(200, 640, 15);
+	gfx_fill_circle(200, 660, 15);
+	gfx_fill_circle(600, 480, 15);
+	gfx_fill_circle(600, 500, 15);
+	gfx_fill_circle(600, 640, 15);
+	gfx_fill_circle(600, 660, 15);
+	
+	gfx_color(0, 0, 0);
+	gfx_fill_circle(360, 400, 25);
+	gfx_fill_circle(440, 400, 25);
+	gfx_line(370, 520, 370, 500);
+	gfx_line(380, 520, 380, 500);
+	gfx_line(390, 520, 390, 500);
+	gfx_line(400, 520, 400, 500);
+	gfx_line(410, 520, 410, 500);
+	gfx_line(420, 520, 420, 500);
+	gfx_line(430, 520, 430, 500);
+	
+	XPoint nose[4];
+	nose[0].x = 400;
+	nose[0].y = 420;
+	nose[1].x = 420;
+	nose[1].y = 465;
+	nose[2].x = 380;
+	nose[2].y = 465;
+	
+	gfx_fill_polygon(nose, 3);
+	
+	
+	
 }
 
 int playerShot(PirateShip *myShip, AttackStats *attack)
@@ -588,7 +824,7 @@ void printText()
 	gfx_text(335, 110, "Up Next: ");
 	gfx_text(105, 770, "Press 'q' anytime to exit.");
 	
-	gfx_changefont("lucidasanstypewriter-bold-24");		// change font for title
+	//gfx_changefont("arial-bold-24");		// change font for title
 	pickColor(4);										// change drawing color to black
 	gfx_text(580, 320, "HUNT");
 	gfx_text(585, 360, "for");
@@ -1328,16 +1564,16 @@ void drawHat() //6
 void printRum()
 {
 	gfx_color(0, 0, 0); 	//black
-	gfx_changefont("lucidasanstypewriter-bold-24");
+	//gfx_changefont("arial-bold-24");
 	gfx_text(120, 240, "WHY IS");
 	gfx_text(120, 320, "THE RUM");
 	gfx_text(120, 400, "ALWAYS");
 	gfx_text(120, 480, "GONE?");
 	
-	gfx_changefont("lucidasanstypewriter-bold-18");
+	//gfx_changefont("arial-bold-18");
 	gfx_text(150, 540, "- Jack Sparrow");
 	
-	gfx_changefont("lucidasanstypewriter-bold-12");
+	//gfx_changefont("arial-bold-12");
 	gfx_text(120, 760, "To exit, press 'q'.");
 }
 
