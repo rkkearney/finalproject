@@ -7,51 +7,51 @@ Final Project - Report
 	From the start of the program, a Pirate themed user interface is displayed with four buttons. The Hunt for Treasure button starts a treasure mini game where you can move around the board, matching three or more blocks of each color to collect treasure. The Attack Ships button sends you to another mini game where you must aim at a target ship and attack and damage the enemy. Both your life and the enemy’s are displayed at the top of the screen. There are two different end displays for when you win or lose. The Drink Rum button will take you to a GFX rendered graphic of Jack Sparrow with a quote. The final button is the quit button, which will end the program. 
 
 // Back End Perspective //
-The main of the program consists mainly of calls to functions. In the main, the window for the entire program is opened. The main also utilizes a for loop and two switch cases to run the entire program and determine which screen to print. There are four main subsections of functions used in the program: title screen, attack, treasure, and rum.
+	The main of the program consists mainly of calls to functions. In the main, the window for the entire program is opened. The main also utilizes a for loop and two switch cases to run the entire program and determine which screen to print. There are four main subsections of functions used in the program: title screen, attack, treasure, and rum.
 	The functions for the title screen with descriptions are the following:
-int checkZone(int X, int Y) checks the position of the mouse click and if it falls within one of the four zones. Depending on the zone, it returns an integer for that zone for the switch case.
-void printMenu() prints the text for the menu.
-void printBox(int x, int y, char * title, int xt, int yt) prints the four brown boxes on the screen for the buttons.
-void printBackground(int x, int y) prints the background colors (sky, water, and sun).
-void printTitle() prints the title text for the title screen.
-void printTitleScreen(int xsize, int ysize) prints the calls all the functions under this section to print the entire title screen for one function call from the main.
-void printShip() prints the ship on the screen. The points are hard coded.
+	int checkZone(int X, int Y) checks the position of the mouse click and if it falls within one of the four zones. Depending on the zone, it returns an integer for that zone for the switch case.
+	void printMenu() prints the text for the menu.
+	void printBox(int x, int y, char * title, int xt, int yt) prints the four brown boxes on the screen for the buttons.
+	void printBackground(int x, int y) prints the background colors (sky, water, and sun).
+	void printTitle() prints the title text for the title screen.
+	void printTitleScreen(int xsize, int ysize) prints the calls all the functions under this section to print the entire title screen for one function call from the main.
+	void printShip() prints the ship on the screen. The points are hard coded.
 
 	The functions for the attack portion with descriptions are the following:
-void attackWave(PirateShip *myShip, AttackStats *attack) runs in a loop until the game ends, or the user presses q to quit. Inside the loop, the program determines the number of successful shots from your cannons hit the enemy ship based on the distance returned by the playerShot function. It then subtracts the corresponding damage from the AttackStats struct and procedes to calculate a random enemy attack. The exact numeric results of each attack wave are printed in the terminal window. If your ship has less than 25% of its life, you lose and the lose screen appears. If the enemy has less than 25% of its life, you win and the win screen appears.
-void attackShip(PirateShip *myShip, AttackStats *attack) generates an enemy of one of three different levels and stores its attributes in the AttackStats struct. Level One has a yellow flag and 10-50 hp, level Two has a red flag and 50-100 hp, and level Three has a blue flag and 100-150 hp. All ships have four cannons.
-void statsBar(PirateShip *myShip, AttackStats *attack);
-void drawEnemy(AttackStats *attack);
-int playerShot(PirateShip *myShip, AttackStats *attack) measures the distance between the center of the moving circle and the center of the white stationary target circle.
-void attackShips() declares the PirateShip struct and the AttackStats struct, then initializes the PirateShip struct and calls attackShip. 
-void loseScreen() displays a skull and crossbones and a quote from Pirates of the Caribbean.
-void winScreen() displays a hard coded graphic of a barrel and treasure with a quote from Pirates of the Caribbean.
-void chest() draws a hard coded treasure chest.
-void barrel() draws a hard coded barrel.
-void skull() draws a hard coded skull and crossbones.
+	void attackWave(PirateShip *myShip, AttackStats *attack) runs in a loop until the game ends, or the user presses q to quit. Inside the loop, the program determines the number of successful shots from your cannons hit the enemy ship based on the distance returned by the playerShot function. It then subtracts the corresponding damage from the AttackStats struct and procedes to calculate a random enemy attack. The exact numeric results of each attack wave are printed in the terminal window. If your ship has less than 25% of its life, you lose and the lose screen appears. If the enemy has less than 25% of its life, you win and the win screen appears.
+	void attackShip(PirateShip *myShip, AttackStats *attack) generates an enemy of one of three different levels and stores its attributes in the AttackStats struct. Level One has a yellow flag and 10-50 hp, level Two has a red flag and 50-100 hp, and level Three has a blue flag and 100-150 hp. All ships have four cannons.
+	void statsBar(PirateShip *myShip, AttackStats *attack);
+	void drawEnemy(AttackStats *attack);
+	int playerShot(PirateShip *myShip, AttackStats *attack) measures the distance between the center of the moving circle and the center of the white stationary target circle.
+	void attackShips() declares the PirateShip struct and the AttackStats struct, then initializes the PirateShip struct and calls attackShip. 
+	void loseScreen() displays a skull and crossbones and a quote from Pirates of the Caribbean.
+	void winScreen() displays a hard coded graphic of a barrel and treasure with a quote from Pirates of the Caribbean.
+	void chest() draws a hard coded treasure chest.
+	void barrel() draws a hard coded barrel.
+	void skull() draws a hard coded skull and crossbones.
 
 	The functions for the hunt for treasure portion with descriptions are the following:
-void pickColor(int c) serves as a function picker. If a valid integer number is inputted, it changes the draw color to that int. Useful when generating random colors.
-void initializeBoard(struct Blocks board[], int length, int x0, int y0, int w) calls all initialize functions to initialize the entire board (the array of structs).
-void initializeX(struct Blocks board[], int length, int x0) initializes the board’s x values for drawing. 
-void initializeY(struct Blocks board[], int length, int x0) initializes the board’s y values for drawing. 
-void initializeTreasure(struct Blocks board[], int length) initializes the board’s treasure values for setting to 0. 
-void randTreasure(struct Blocks board[], int length) initializes the board’s random treasure positions for the game.
-void initializeWidth(struct Blocks board[], int length, int width) initializes the board’s width values to 40.
-void initializeColor(struct Blocks board[], int length) initializes the board’s color values to white except for the starting position.
-void initializePosition(struct Blocks board[], int length) initializes the board’s current position values to 0 except for starting position (set to 1).
-void printBoard(struct Blocks board[], int length) this prints the now initialized board using the color and the x and y values. If it is a treasure value, it prints a yellow coin on top. If is is the current position it prints an X. 
-void printCoin(int x, int y) the function that prints the coin on the block that is treasure and it is called from printBoard.
-void printX(int x, int y) prints the x on the current position and called in printBoard.
-void printUpcoming(int x) prints the upcoming color at the top of the screen.
-void printText() prints the text instructions on top of screen as well as title on right.
-int newColor() generates a random number between 0 and 2 to pass to pickColor to set a random color for the next block.
-void printBlock(int x, int y, int width, int color) prints a specific block.
-int move(struct Blocks board[], int length, int currentPosition, int nextColor, char c), using a switch case, this determines what the current position should be changed to due to user input. It then changes all values necessary before checking for a match. 
-int isTrapped(struct Blocks board[], int length, int currentPosition) checks if the block is surrounded by either a boundary or blocks that are not white and not a match. If it is trapped, it returns true (1). If not, it returns false (0).
-int checkFour(struct Blocks board[], int length, int currentPosition) checks if there is a match of four around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
-int checkThree(struct Blocks board[], int length, int currentPosition) checks if there is a match of three around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
-int checkTwo(struct Blocks board[], int length, int currentPosition) checks if there is a match of two around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
-int treasureHunt() runs all these functions for one easy call from the main.
+	void pickColor(int c) serves as a function picker. If a valid integer number is inputted, it changes the draw color to that int. Useful when generating random colors.
+	void initializeBoard(struct Blocks board[], int length, int x0, int y0, int w) calls all initialize functions to initialize the entire board (the array of structs).
+	void initializeX(struct Blocks board[], int length, int x0) initializes the board’s x values for drawing. 
+	void initializeY(struct Blocks board[], int length, int x0) initializes the board’s y values for drawing. 
+	void initializeTreasure(struct Blocks board[], int length) initializes the board’s treasure values for setting to 0. 
+	void randTreasure(struct Blocks board[], int length) initializes the board’s random treasure positions for the game.
+	void initializeWidth(struct Blocks board[], int length, int width) initializes the board’s width values to 40.
+	void initializeColor(struct Blocks board[], int length) initializes the board’s color values to white except for the starting position.
+	void initializePosition(struct Blocks board[], int length) initializes the board’s current position values to 0 except for starting position (set to 1).
+	void printBoard(struct Blocks board[], int length) this prints the now initialized board using the color and the x and y values. If it is a treasure value, it prints a yellow coin on top. If is is the current position it prints an X. 
+	void printCoin(int x, int y) the function that prints the coin on the block that is treasure and it is called from printBoard.
+	void printX(int x, int y) prints the x on the current position and called in printBoard.
+	void printUpcoming(int x) prints the upcoming color at the top of the screen.
+	void printText() prints the text instructions on top of screen as well as title on right.
+	int newColor() generates a random number between 0 and 2 to pass to pickColor to set a random color for the next block.
+	void printBlock(int x, int y, int width, int color) prints a specific block.
+	int move(struct Blocks board[], int length, int currentPosition, int nextColor, char c), using a switch case, this determines what the current position should be changed to due to user input. It then changes all values necessary before checking for a match. 
+	int isTrapped(struct Blocks board[], int length, int currentPosition) checks if the block is surrounded by either a boundary or blocks that are not white and not a match. If it is trapped, it returns true (1). If not, it returns false (0).
+	int checkFour(struct Blocks board[], int length, int currentPosition) checks if there is a match of four around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
+	int checkThree(struct Blocks board[], int length, int currentPosition) checks if there is a match of three around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
+	int checkTwo(struct Blocks board[], int length, int currentPosition) checks if there is a match of two around a block (plus the current block). Returns 1 if a match is made. If not, it returns 0.
+	int treasureHunt() runs all these functions for one easy call from the main.
 
 	The functions for the rum portion are all hard coded points and calls to gfx_color() and gfx_fill_polygon() to draw the feature or features in their title. drawBlackHair(), drawFace(), drawLips(), drawMushtache(), drawTeeth(), drawBeard(), drawEyebrows(), drawNostril(), drawEye(), drawBrownHair(), drawHat() all draw a feature of the infamous Captain Jack Sparrow. printRum() prints the quote for the screen and exit instructions.
